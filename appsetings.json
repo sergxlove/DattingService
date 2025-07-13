@@ -3,10 +3,24 @@
 
     },
     "DataAccess.Profiles.Postgres": {
-        "ConnectionStrings": "User ID=postgres;Password=123;Host=localhost;Port=5432;Database=db;"
+        "Connections": {
+            "ConnectionStrings": "User ID=postgres;Password=123;Host=localhost;Port=5432;Database=db;",
+            "User ID": "postgres",
+            "Password": "123",
+            "Host": "localhost",
+            "Port": "5432",
+            "Database":  "db"
+        }
     },
     "DataAccess.Swipes.Postgres": {
-        "ConnectionStrings": "User ID=postgres;Password=123;Host=localhost;Port=5432;Database=db;"
+        "Connections": {
+            "ConnectionStrings": "User ID=postgres;Password=123;Host=localhost;Port=5432;Database=db;",
+            "User ID": "postgres",
+            "Password": "123",
+            "Host": "localhost",
+            "Port": "5432",
+            "Database": "db"
+        }
     },
     "DattingService.Core": {
 
