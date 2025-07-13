@@ -1,24 +1,22 @@
-﻿using DataAccess.Profiles.Postgres.Models;
+﻿using DataAccess.Profiles.Postgres.Configurations;
+using DataAccess.Profiles.Postgres.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess.Profiles.Postgres
 {
     public class ProfilesDbContext : DbContext
     {
-        public ProfilesDbContext()
-        {
-            
-        }
-
+        public ProfilesDbContext(DbContextOptions<ProfilesDbContext> options) : base(options) { }
         public DbSet<UsersEntity> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("");
+            base.OnConfiguring(optionsBuilder);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyConfiguration(new UsersConfigurations());
             base.OnModelCreating(modelBuilder);
         }
     }
