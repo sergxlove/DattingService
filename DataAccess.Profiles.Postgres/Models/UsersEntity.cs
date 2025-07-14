@@ -14,5 +14,7 @@
 
         public string PhotoURL { get; set; } = string.Empty;
 
+        public bool IsActive { get; set; }
+
     }
 }

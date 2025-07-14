@@ -17,8 +17,10 @@
 
         public string PhotoURL { get; } = string.Empty;
 
+        public bool IsActive { get; } 
+
         public static (Users? user, string error) Create(string name, int age,
-            string description, string city, string photoURL)
+            string description, string city, string photoURL, bool isActive)
         {
             Users? users = null;
             string error = string.Empty;
@@ -65,12 +67,12 @@
                 return (users, error);
             }
 
-            users = new Users(name, age, description, city, photoURL);
+            users = new Users(name, age, description, city, photoURL, isActive);
             return (users, error);
         }
 
         private Users(string name, int age,
-            string description, string city, string photoURL)
+            string description, string city, string photoURL, bool isActive)
         {
             Id = Guid.NewGuid();
             Name = name;
@@ -78,6 +80,7 @@
             Description = description;
             City = city;
             PhotoURL = photoURL;
+            IsActive = isActive;
         }
     }
 }
