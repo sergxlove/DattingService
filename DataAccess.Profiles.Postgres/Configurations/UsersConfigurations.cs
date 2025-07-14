@@ -15,6 +15,7 @@ namespace DataAccess.Profiles.Postgres.Configurations
             builder.Property(x => x.Age).IsRequired();
             builder.Property(x => x.City).IsRequired().HasMaxLength(Users.MAX_LENGTH_STRING);
             builder.Property(x => x.Description).IsRequired().HasMaxLength(Users.MAX_LENGTH_DESCRIPTION);
+            builder.Property(x => x.IsActive).IsRequired();
         }
     }
 }
