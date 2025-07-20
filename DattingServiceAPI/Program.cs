@@ -1,10 +1,14 @@
 using DataAccess.Profiles.Postgres;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using ProfilesServiceAPI.Abstractions;
+using ProfilesServiceAPI.Extensions;
 using ProfilesServiceAPI.Repositories;
 using ProfilesServiceAPI.Services;
 using Serilog;
-using System.Security.Cryptography.X509Certificates;
+using System.Security.Claims;
+using System.Text;
 
 namespace ProfilesServiceAPI
 {
@@ -16,9 +20,10 @@ namespace ProfilesServiceAPI
             builder.Configuration.AddJsonFile("D:\\projects\\DattingService\\appsetings.json");
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
-                .WriteTo.File("")
+                .WriteTo.Console()
+                .WriteTo.File("D:\\projects\\DattingService\\log.txt")
                 .CreateLogger();
-            builder.Host.UseSerilog();
+            //builder.Host.UseSerilog();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<ProfilesDbContext>(options =>
@@ -27,13 +32,56 @@ namespace ProfilesServiceAPI
                 .Value));
             builder.Services.AddScoped<IUsersRepository, UsersRepository>();
             builder.Services.AddScoped<IUsersService, UsersService>();
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    IConfigurationSection? jwtSettings = builder.Configuration
+                        .GetSection("ProfilesServiceAPI:JwtSettings");
+                    options.TokenValidationParameters = new()
+                    {
+                        ValidateIssuer = false,
+                        ValidIssuer = jwtSettings["Issuer"],
+                        ValidateAudience = false,
+                        ValidAudience = jwtSettings["Audience"],
+                        ValidateLifetime = false,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
+                            .GetBytes(jwtSettings["SecretKey"]!)),
+                        ValidateIssuerSigningKey = true
+                    };
+                    options.Events = new JwtBearerEvents()
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            context.Token = context.Request.Cookies["jwt"];
+                            return Task.CompletedTask;
+                        }
+                    };
+                });
+
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("OnlyForAdmin", policy =>
+                {
+                    policy.RequireClaim(ClaimTypes.Role, "admin");
+                });
+                options.AddPolicy("OnlyForAuthUser", policy =>
+                {
+                    policy.RequireClaim(ClaimTypes.Role, "user");
+                });
+            });
+
             var app = builder.Build();
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
             app.UseWelcomePage();
+
+            app.MapAllEndpoints();
 
             app.Run();
         }
