@@ -12,9 +12,7 @@ namespace DattingService.Core.Models
 
         public string Username { get; } = string.Empty;
 
-        public string Password { get; } = string.Empty;
-
-        public Users? User { get; }
+        public string Password { get; private set; } = string.Empty;
 
         private UsersDataForLogin(Guid id, string username, string password)
         {
@@ -93,6 +91,21 @@ namespace DattingService.Core.Models
 
             user = new UsersDataForLogin(id, username, passwordHash);
             return (user, error);
+        }
+
+        public string UpdatePassword(string newPassword)
+        {
+            if (string.IsNullOrEmpty(newPassword)) return "password is null";
+            if (newPassword.Length > MAX_LENGTH_STRING || newPassword.Length < MIN_LENGTH_STRING)
+            {
+                return $"need password is {MIN_LENGTH_STRING}-{MAX_LENGTH_STRING} symbols";
+            }
+
+            byte[] bytes = Encoding.UTF8.GetBytes(newPassword);
+            SHA256 sha256 = SHA256.Create();
+            byte[] hashBytes = sha256.ComputeHash(bytes);
+            Password = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+            return "done";
         }
     }
 }

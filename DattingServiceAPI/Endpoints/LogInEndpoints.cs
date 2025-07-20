@@ -12,12 +12,20 @@ namespace ProfilesServiceAPI.Endpoints
                 return Results.Ok();
             }).RequireAuthorization("OnlyForAuthUser");
 
-            app.MapPost("/api/users/login", (LoginRequest l, HttpContext context) =>
+            app.MapPost("/api/users/login", (HttpContext context) =>
             {
-                
-
                 return Results.Ok();
             });
+
+            app.MapPost("/api/users/reg", (HttpContext context) =>
+            {
+                return Results.Ok();
+            });
+
+            app.MapDelete("/api/users/delete", (HttpContext context) =>
+            {
+                return Results.Ok();
+            }).RequireAuthorization("OnlyForAuthUser");
 
             return app;
         }

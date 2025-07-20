@@ -1,0 +1,11 @@
+FROM postgres:alpine
+
+WORKDIR /app
+
+ENV POSTGRES_DB=db
+ENV POSTGRES_USER=postgres
+ENV POSTGRES_PASSWORD=123
+
+VOLUME /var/lib/postgresql/data
+
+EXPOSE 5432

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DataAccess.Swipes.Postgres.Configurations;
+using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess.Swipes.Postgres
 {
@@ -16,6 +17,7 @@ namespace DataAccess.Swipes.Postgres
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyConfiguration(new SwipesConfigurations());
             base.OnModelCreating(modelBuilder);
         }
     }
