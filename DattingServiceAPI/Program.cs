@@ -32,6 +32,8 @@ namespace ProfilesServiceAPI
                 .Value));
             builder.Services.AddScoped<IUsersRepository, UsersRepository>();
             builder.Services.AddScoped<IUsersService, UsersService>();
+            builder.Services.AddScoped<IUsersLoginRepository, UsersLoginRepository>();
+            builder.Services.AddScoped<IUsersLoginService, UsersLoginService>();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>

@@ -8,6 +8,5 @@
 
         public string Password { get; set; } = string.Empty;
 
-        public UsersEntity? User { get; set; }
     }
 }

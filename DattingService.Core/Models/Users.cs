@@ -19,8 +19,6 @@
 
         public bool IsActive { get; } 
 
-        public UsersDataForLogin? UserLogin { get; }
-
         public static (Users? user, string error) Create(string name, int age,
             string description, string city, string photoURL, bool isActive)
         {
