@@ -16,5 +16,7 @@
 
         public bool IsActive { get; set; }
 
+        public UserDataForLoginEntity? UserData {  get; set; }
+
     }
 }

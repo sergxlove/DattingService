@@ -1,0 +1,98 @@
+2025-07-19 18:26:22.069 +06:00 [INF] User profile is available. Using 'C:\Users\honor\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-07-19 18:26:22.205 +06:00 [INF] Creating key {65f2529b-0bc9-4efb-a540-47ea89ff8312} with creation date 2025-07-19 12:26:22Z, activation date 2025-07-19 12:26:22Z, and expiration date 2025-10-17 12:26:22Z.
+2025-07-19 18:26:22.219 +06:00 [INF] Writing data to file 'C:\Users\honor\AppData\Local\ASP.NET\DataProtection-Keys\key-65f2529b-0bc9-4efb-a540-47ea89ff8312.xml'.
+2025-07-19 18:26:22.496 +06:00 [INF] Now listening on: https://localhost:7006
+2025-07-19 18:26:22.496 +06:00 [INF] Now listening on: http://localhost:5295
+2025-07-19 18:26:22.509 +06:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2025-07-19 18:26:22.620 +06:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-07-19 18:26:22.620 +06:00 [INF] Hosting environment: Development
+2025-07-19 18:26:22.620 +06:00 [INF] Content root path: D:\projects\DattingService\DattingServiceAPI
+2025-07-19 18:26:36.330 +06:00 [INF] User profile is available. Using 'C:\Users\honor\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-07-19 18:26:36.588 +06:00 [INF] Now listening on: https://localhost:7006
+2025-07-19 18:26:36.589 +06:00 [INF] Now listening on: http://localhost:5295
+2025-07-19 18:26:36.598 +06:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2025-07-19 18:26:36.646 +06:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-07-19 18:26:36.646 +06:00 [INF] Hosting environment: Development
+2025-07-19 18:26:36.647 +06:00 [INF] Content root path: D:\projects\DattingService\DattingServiceAPI
+2025-07-19 18:40:51.167 +06:00 [INF] User profile is available. Using 'C:\Users\honor\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-07-19 18:40:51.431 +06:00 [INF] Now listening on: https://localhost:7006
+2025-07-19 18:40:51.432 +06:00 [INF] Now listening on: http://localhost:5295
+2025-07-19 18:40:51.441 +06:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2025-07-19 18:40:51.546 +06:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-07-19 18:40:51.546 +06:00 [INF] Hosting environment: Development
+2025-07-19 18:40:51.546 +06:00 [INF] Content root path: D:\projects\DattingService\DattingServiceAPI
+2025-07-19 18:42:05.850 +06:00 [INF] User profile is available. Using 'C:\Users\honor\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-07-19 18:42:06.112 +06:00 [INF] Now listening on: https://localhost:7006
+2025-07-19 18:42:06.113 +06:00 [INF] Now listening on: http://localhost:5295
+2025-07-19 18:42:06.122 +06:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2025-07-19 18:42:06.174 +06:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-07-19 18:42:06.174 +06:00 [INF] Hosting environment: Development
+2025-07-19 18:42:06.174 +06:00 [INF] Content root path: D:\projects\DattingService\DattingServiceAPI
+2025-07-19 18:42:33.386 +06:00 [INF] User profile is available. Using 'C:\Users\honor\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-07-19 18:42:40.462 +06:00 [INF] Now listening on: https://localhost:7006
+2025-07-19 18:42:40.463 +06:00 [INF] Now listening on: http://localhost:5295
+2025-07-19 18:42:40.474 +06:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2025-07-19 18:42:40.546 +06:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-07-19 18:42:40.546 +06:00 [INF] Hosting environment: Development
+2025-07-19 18:42:40.546 +06:00 [INF] Content root path: D:\projects\DattingService\DattingServiceAPI
+2025-07-19 18:43:01.578 +06:00 [INF] User profile is available. Using 'C:\Users\honor\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-07-19 18:43:01.812 +06:00 [INF] Now listening on: https://localhost:7006
+2025-07-19 18:43:01.812 +06:00 [INF] Now listening on: http://localhost:5295
+2025-07-19 18:43:01.822 +06:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2025-07-19 18:43:01.911 +06:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-07-19 18:43:01.911 +06:00 [INF] Hosting environment: Development
+2025-07-19 18:43:01.911 +06:00 [INF] Content root path: D:\projects\DattingService\DattingServiceAPI
+2025-07-19 18:43:29.623 +06:00 [INF] User profile is available. Using 'C:\Users\honor\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-07-19 18:43:29.882 +06:00 [INF] Now listening on: https://localhost:7006
+2025-07-19 18:43:29.883 +06:00 [INF] Now listening on: http://localhost:5295
+2025-07-19 18:43:29.891 +06:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2025-07-19 18:43:29.941 +06:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-07-19 18:43:29.941 +06:00 [INF] Hosting environment: Development
+2025-07-19 18:43:29.941 +06:00 [INF] Content root path: D:\projects\DattingService\DattingServiceAPI
+2025-07-19 18:47:58.929 +06:00 [INF] User profile is available. Using 'C:\Users\honor\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-07-19 18:47:59.170 +06:00 [INF] Now listening on: https://localhost:7006
+2025-07-19 18:47:59.171 +06:00 [INF] Now listening on: http://localhost:5295
+2025-07-19 18:47:59.180 +06:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2025-07-19 18:47:59.230 +06:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-07-19 18:47:59.230 +06:00 [INF] Hosting environment: Development
+2025-07-19 18:47:59.230 +06:00 [INF] Content root path: D:\projects\DattingService\DattingServiceAPI
+2025-07-19 19:15:05.802 +06:00 [INF] User profile is available. Using 'C:\Users\honor\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-07-19 19:15:06.092 +06:00 [INF] Now listening on: https://localhost:7006
+2025-07-19 19:15:06.095 +06:00 [INF] Now listening on: http://localhost:5295
+2025-07-19 19:15:06.107 +06:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2025-07-19 19:15:06.173 +06:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-07-19 19:15:06.175 +06:00 [INF] Hosting environment: Development
+2025-07-19 19:15:06.177 +06:00 [INF] Content root path: D:\projects\DattingService\DattingServiceAPI
+2025-07-19 19:30:41.493 +06:00 [INF] User profile is available. Using 'C:\Users\honor\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-07-19 19:30:41.767 +06:00 [INF] Now listening on: https://localhost:7006
+2025-07-19 19:30:41.770 +06:00 [INF] Now listening on: http://localhost:5295
+2025-07-19 19:30:41.786 +06:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2025-07-19 19:30:41.844 +06:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-07-19 19:30:41.847 +06:00 [INF] Hosting environment: Development
+2025-07-19 19:30:41.849 +06:00 [INF] Content root path: D:\projects\DattingService\DattingServiceAPI
+2025-07-19 19:30:47.310 +06:00 [INF] Request starting HTTP/2 GET https://localhost:7006/ - null null
+2025-07-19 19:30:49.680 +06:00 [INF] Request starting HTTP/2 GET https://localhost:7006/_framework/aspnetcore-browser-refresh.js - null null
+2025-07-19 19:30:49.680 +06:00 [INF] Request starting HTTP/2 GET https://localhost:7006/_vs/browserLink - null null
+2025-07-19 19:30:49.683 +06:00 [INF] Request finished HTTP/2 GET https://localhost:7006/ - 200 null text/html; charset=utf-8 2376.8889ms
+2025-07-19 19:30:49.726 +06:00 [INF] Request finished HTTP/2 GET https://localhost:7006/_framework/aspnetcore-browser-refresh.js - 200 16521 application/javascript; charset=utf-8 45.6588ms
+2025-07-19 19:30:49.889 +06:00 [INF] Request finished HTTP/2 GET https://localhost:7006/_vs/browserLink - 200 null text/javascript; charset=UTF-8 208.7647ms
+2025-07-19 19:30:49.944 +06:00 [INF] Request starting HTTP/2 GET https://localhost:7006/favicon.ico - null null
+2025-07-19 19:30:49.961 +06:00 [INF] Request finished HTTP/2 GET https://localhost:7006/favicon.ico - 200 null text/html; charset=utf-8 16.6535ms
+2025-07-19 19:31:02.225 +06:00 [INF] Request starting HTTP/2 GET https://localhost:7006/_framework/aspnetcore-browser-refresh.js - null null
+2025-07-19 19:31:02.233 +06:00 [INF] Request starting HTTP/2 GET https://localhost:7006/_vs/browserLink - null null
+2025-07-19 19:31:02.235 +06:00 [INF] Request finished HTTP/2 GET https://localhost:7006/_framework/aspnetcore-browser-refresh.js - 200 16521 application/javascript; charset=utf-8 9.8064ms
+2025-07-19 19:31:02.252 +06:00 [INF] Request finished HTTP/2 GET https://localhost:7006/_vs/browserLink - 200 null text/javascript; charset=UTF-8 19.1585ms
+2025-07-19 19:31:02.550 +06:00 [INF] Request starting HTTP/2 GET https://localhost:7006/swagger/v1/swagger.json - null null
+2025-07-19 19:31:02.590 +06:00 [INF] Request finished HTTP/2 GET https://localhost:7006/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 40.6893ms
+2025-07-19 19:31:08.423 +06:00 [INF] Request starting HTTP/2 GET https://localhost:7006/swagger/v1/swagger.json - null null
+2025-07-19 19:31:08.438 +06:00 [INF] Request finished HTTP/2 GET https://localhost:7006/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 14.3804ms
+2025-07-19 19:31:08.493 +06:00 [INF] Request starting HTTP/2 GET https://localhost:7006/favicon.ico - null null
+2025-07-19 19:31:08.500 +06:00 [INF] Request finished HTTP/2 GET https://localhost:7006/favicon.ico - 200 null text/html; charset=utf-8 7.3338ms
+2025-07-19 19:31:18.414 +06:00 [INF] Request starting HTTP/2 GET https://localhost:7006/swagger/index.html - null null
+2025-07-19 19:31:18.503 +06:00 [INF] Request finished HTTP/2 GET https://localhost:7006/swagger/index.html - 200 null text/html;charset=utf-8 89.138ms
+2025-07-19 19:31:18.518 +06:00 [INF] Request starting HTTP/2 GET https://localhost:7006/_framework/aspnetcore-browser-refresh.js - null null
+2025-07-19 19:31:18.518 +06:00 [INF] Request starting HTTP/2 GET https://localhost:7006/_vs/browserLink - null null
+2025-07-19 19:31:18.525 +06:00 [INF] Request finished HTTP/2 GET https://localhost:7006/_framework/aspnetcore-browser-refresh.js - 200 16521 application/javascript; charset=utf-8 6.5983ms
+2025-07-19 19:31:18.537 +06:00 [INF] Request finished HTTP/2 GET https://localhost:7006/_vs/browserLink - 200 null text/javascript; charset=UTF-8 18.6661ms
+2025-07-19 19:31:18.663 +06:00 [INF] Request starting HTTP/2 GET https://localhost:7006/swagger/v1/swagger.json - null null
+2025-07-19 19:31:18.672 +06:00 [INF] Request finished HTTP/2 GET https://localhost:7006/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 8.24ms

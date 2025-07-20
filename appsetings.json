@@ -29,7 +29,11 @@
 
     },
     "ProfilesServiceAPI": {
-
+        "JwtSettings": {
+            "Issuer": "MyAuthServer",
+            "Audiens": "MyAuthClient",
+            "SecretKey": "mysecretkeymysecretkeymysecretkey"
+        }
     },
     "SwipesServiceAPI": {
 

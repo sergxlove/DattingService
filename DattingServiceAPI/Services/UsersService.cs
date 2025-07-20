@@ -6,12 +6,12 @@ namespace ProfilesServiceAPI.Services
 { 
     public class UsersService : IUsersService
     {
-        public UsersService(UsersRepository repository)
+        public UsersService(IUsersRepository repository)
         {
             _repository = repository;
         }
 
-        private readonly UsersRepository _repository;
+        private readonly IUsersRepository _repository;
 
         public async Task<Users?> GetByIdAsync(Guid id)
         {
