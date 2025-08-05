@@ -10,7 +10,7 @@ namespace DataAccess.Photo.MongoDB
         public IMongoCollection<Photos> PhotosCollection { get; set; }
         public IMongoDatabase Database { get; set; }
 
-        public PhotoDbContext(string connectionString = "mongodb://localhost:27017", string nameDatabase = "test")
+        public PhotoDbContext(string connectionString = "mongodb://localhost:27017", string nameDatabase = "photo")
         {
             _client = new MongoClient(connectionString);
             Database = _client.GetDatabase(nameDatabase);

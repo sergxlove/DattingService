@@ -1,3 +1,4 @@
+using DataAccess.Photo.MongoDB;
 using DataAccess.Profiles.Postgres;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +35,14 @@ namespace ProfilesServiceAPI
             builder.Services.AddScoped<IUsersService, UsersService>();
             builder.Services.AddScoped<IUsersLoginRepository, UsersLoginRepository>();
             builder.Services.AddScoped<IUsersLoginService, UsersLoginService>();
+            builder.Services.AddSingleton<PhotoDbContext>(options =>
+            {
+                return new PhotoDbContext(
+                    connectionString: "mongodb://localhost:27017",
+                    nameDatabase: "photo"
+                    );
+            });
+           
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
