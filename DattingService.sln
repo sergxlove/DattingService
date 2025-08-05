@@ -13,8 +13,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationsServiceAPI", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess.Profiles.Postgres", "DataAccess.Profiles.Postgres\DataAccess.Profiles.Postgres.csproj", "{BEB2EA3B-04CD-448A-AE26-0D572B669660}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess.Swipes.Postgres", "DataAccess.Swipes.Postgres\DataAccess.Swipes.Postgres.csproj", "{4538483B-7CBF-4C3E-95DB-074AC4176A89}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DattingService.Core", "DattingService.Core\DattingService.Core.csproj", "{0763D2D4-C330-499C-8AE8-C8E44156718A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решения", "Элементы решения", "{754FC069-D67B-A9D7-50A1-8D1CA196D8F1}"
@@ -52,10 +50,6 @@ Global
 		{BEB2EA3B-04CD-448A-AE26-0D572B669660}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BEB2EA3B-04CD-448A-AE26-0D572B669660}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BEB2EA3B-04CD-448A-AE26-0D572B669660}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4538483B-7CBF-4C3E-95DB-074AC4176A89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4538483B-7CBF-4C3E-95DB-074AC4176A89}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4538483B-7CBF-4C3E-95DB-074AC4176A89}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4538483B-7CBF-4C3E-95DB-074AC4176A89}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0763D2D4-C330-499C-8AE8-C8E44156718A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0763D2D4-C330-499C-8AE8-C8E44156718A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0763D2D4-C330-499C-8AE8-C8E44156718A}.Release|Any CPU.ActiveCfg = Release|Any CPU
