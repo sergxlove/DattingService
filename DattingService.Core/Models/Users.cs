@@ -19,7 +19,7 @@
 
         public bool IsActive { get; } 
 
-        public static (Users? user, string error) Create(string name, int age,
+        public static (Users? user, string error) Create(Guid id,string name, int age,
             string description, string city, string photoURL, bool isActive)
         {
             Users? users = null;
@@ -67,14 +67,14 @@
                 return (users, error);
             }
 
-            users = new Users(name, age, description, city, photoURL, isActive);
+            users = new Users(id, name, age, description, city, photoURL, isActive);
             return (users, error);
         }
 
-        private Users(string name, int age,
+        private Users(Guid id,string name, int age,
             string description, string city, string photoURL, bool isActive)
         {
-            Id = Guid.NewGuid();
+            Id = id;
             Name = name;
             Age = age;
             Description = description;

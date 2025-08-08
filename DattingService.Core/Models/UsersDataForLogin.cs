@@ -1,5 +1,4 @@
-﻿using static System.Net.Mime.MediaTypeNames;
-using System.Text;
+﻿using System.Text;
 using System.Security.Cryptography;
 
 namespace DattingService.Core.Models
@@ -21,7 +20,7 @@ namespace DattingService.Core.Models
             Password = password;
         }
 
-        public (UsersDataForLogin? user, string error) Create(string username, string password)
+        public static (UsersDataForLogin? user, string error) Create(string username, string password)
         {
             UsersDataForLogin? user = null;
             string error = string.Empty;

@@ -4,7 +4,7 @@ namespace DataAccess.Photo.MongoDB.Models
 {
     public class Photos
     {
-        public ObjectId Id { get; set; }
+        public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
 
         public Guid UserId { get; set; } 
 

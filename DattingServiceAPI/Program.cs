@@ -42,8 +42,11 @@ namespace ProfilesServiceAPI
                     nameDatabase: "photo"
                     );
             });
-           
-
+            builder.Services.AddScoped<IConvertService, ConvertService>();
+            builder.WebHost.ConfigureKestrel(options =>
+            {
+                options.Limits.MaxRequestBodySize = 10 * 1024 * 1024; // 10 MB
+            });
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
