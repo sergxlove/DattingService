@@ -21,7 +21,7 @@ namespace ProfilesServiceAPI.Repositories
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.Id == id);
             if (result == null) return null;
-            return Users.Create(result.Name, result.Age, result.Description, result.City, 
+            return Users.Create(result.Id,result.Name, result.Age, result.Description, result.City, 
                 result.PhotoURL, result.IsActive).user!;
         }
 
