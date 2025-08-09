@@ -25,19 +25,19 @@
             Users? users = null;
             string error = string.Empty;
 
-            if (!string.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 error = "name is null";
                 return (users, error);
             }
 
-            if(!string.IsNullOrEmpty(description))
+            if(string.IsNullOrEmpty(description))
             {
                 error = "description is null";
                 return (users, error);
             }
 
-            if(!string.IsNullOrEmpty(city))
+            if(string.IsNullOrEmpty(city))
             {
                 error = "city is null";
                 return (users, error);

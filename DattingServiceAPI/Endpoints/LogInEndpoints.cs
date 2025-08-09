@@ -1,5 +1,4 @@
 ﻿using DataAccess.Photo.MongoDB.Models;
-using DataAccess.Profiles.Postgres.Models;
 using DattingService.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using ProfilesServiceAPI.Abstractions;
@@ -52,24 +51,24 @@ namespace ProfilesServiceAPI.Endpoints
             });
 
             app.MapPost("/api/users/reg", async (HttpContext context, 
-                IFormFile file, 
-                RegistrRequest request) =>
+                [FromServices] IUsersLoginService userLoginService,
+                [FromServices] IUsersService usersService,
+                [FromServices] IPhotosService photoService,
+                [FromServices] IConvertService convertService,
+                [FromBody] RegistrRequest request) =>
             {
                 try
                 {
                     if (request is null) return Results.BadRequest("data is null");
-                    if (file == null || file.Length == 0) return Results.BadRequest("No file uploaded");
-                    if (!file.FileName.EndsWith(".png") && !file.FileName.EndsWith(".jpg"))
+                    if (request.File == null || request.File.Length == 0) return Results.BadRequest("No file uploaded");
+                    if (!request.File.FileName.EndsWith(".png") && !request.File.FileName.EndsWith(".jpg"))
                         return Results.BadRequest("file is not .png, .jpg");
-                    var userLoginService = app.ServiceProvider.GetService<IUsersLoginService>();
-                    var usersService = app.ServiceProvider.GetService<IUsersService>();
-                    var photoService = app.ServiceProvider.GetService<IPhotosService>();
-                    var convertService = app.ServiceProvider.GetService<IConvertService>();
+
                     Guid userId = Guid.NewGuid();
                     Photos photo = new Photos()
                     {
                         UserId = userId,
-                        Image = await convertService!.ConvertFormFileToByteArray(file),
+                        Image = await convertService!.ConvertFormFileToByteArray(request.File),
                         ContentType = "image"
                     };
                     string urlPhoto = await photoService!.CreateAsync(photo);
