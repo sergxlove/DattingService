@@ -33,6 +33,11 @@ namespace ProfilesServiceAPI.Services
             return await _repository.ActiveAsync(id);
         }
 
+        public async Task<int> VerifyAsync(Guid id)
+        {
+            return await _repository.VerifyAsync(id);
+        }
+
         public async Task<int> InactiveAsync(Guid id)
         {
             return await _repository.InactiveAsync(id);

@@ -1,4 +1,4 @@
-﻿namespace DattingService.Core.model
+﻿namespace DattingService.Core.Models
 {
     public class Result<T>
     {

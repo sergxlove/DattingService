@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 
-namespace DattingService.Core.model
+namespace DattingService.Core.Models
 {
     public class Interests
     {

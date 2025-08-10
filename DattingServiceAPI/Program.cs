@@ -1,8 +1,12 @@
 using DataAccess.Photo.MongoDB;
+using DataAccess.Photo.MongoDB.Abstractions;
+using DataAccess.Photo.MongoDB.Repositories;
 using DataAccess.Profiles.Postgres;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Driver;
 using ProfilesServiceAPI.Abstractions;
 using ProfilesServiceAPI.Extensions;
 using ProfilesServiceAPI.Repositories;
@@ -33,19 +37,24 @@ namespace ProfilesServiceAPI
                 .Value));
             builder.Services.AddScoped<IUsersRepository, UsersRepository>();
             builder.Services.AddScoped<IUsersService, UsersService>();
-            builder.Services.AddScoped<IUsersLoginRepository, UsersLoginRepository>();
-            builder.Services.AddScoped<IUsersLoginService, UsersLoginService>();
-            builder.Services.AddSingleton<PhotoDbContext>(options =>
+            builder.Services.AddScoped<ILoginUsersRepository, LoginUsersRepository>();
+            builder.Services.AddScoped<ILoginUsersService, LoginUsersService>();
+            builder.Services.AddScoped<IInterestsRepository, InterestsRepository>();
+            builder.Services.AddScoped<IInterestsService, InterestsService>();
+            builder.Services.AddSingleton<IMongoClient>(_ =>
+                new MongoClient("mongodb://localhost:27017"));
+            builder.Services.AddScoped<PhotoDbContext>(provider =>
             {
-                return new PhotoDbContext(
-                    connectionString: "mongodb://localhost:27017",
-                    nameDatabase: "photo"
-                    );
+                var client = provider.GetRequiredService<IMongoClient>();
+                return new PhotoDbContext(client, "photo");
             });
             builder.Services.AddScoped<IConvertService, ConvertService>();
+            builder.Services.AddScoped<IPhotoRepository, PhotoRepository>();
+            builder.Services.AddScoped<IPhotosService, PhotosService>();
+            builder.Services.AddScoped<IJwtProviderService, JwtProviderService>();
             builder.WebHost.ConfigureKestrel(options =>
             {
-                options.Limits.MaxRequestBodySize = 10 * 1024 * 1024; // 10 MB
+                options.Limits.MaxRequestBodySize = 10 * 1024 * 1024; 
             });
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
