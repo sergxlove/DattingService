@@ -8,6 +8,6 @@ namespace ProfilesServiceAPI.Abstractions
         Task<bool> CheckAsync(string email);
         Task<int> DeleteAsync(string email);
         Task<int> UpdatePasswordAsync(LoginUsers user);
-        Task<bool> VerifyAsync(string email, string password);
+        Task<Guid?> VerifyAsync(string email, string password);
     }
 }

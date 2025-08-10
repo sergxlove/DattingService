@@ -1,5 +1,4 @@
-﻿using DataAccess.Photo.MongoDB.Models;
-using DattingService.Core.Models;
+﻿using DattingService.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using ProfilesServiceAPI.Abstractions;
 using ProfilesServiceAPI.Requests;
@@ -28,14 +27,15 @@ namespace ProfilesServiceAPI.Endpoints
                         return Results.BadRequest("login or password is empty");
                     
                     if (await loginUserService!.CheckAsync(request.Username))
-                        return Results.BadRequest("user is not found");
-                    
-                    if (!await loginUserService!.VerifyAsync(request.Username, request.Password))
-                        return Results.BadRequest("no auth");
-                    
+                       return Results.BadRequest("user is not found");
+
+                    Guid? idUser = await loginUserService.VerifyAsync(request.Username, request.Password);
+                    if (idUser == null) return Results.BadRequest("no auth");
+
                     var claims = new List<Claim>()
                     {
-                        new Claim(ClaimTypes.Role, "user")
+                        new Claim(ClaimTypes.Role, "user"),
+                        new Claim(ClaimTypes.Sid, idUser.ToString()!),
                     };
                     var token = jwtGenerate!.GenerateToken(new JwtRequest()
                     {
@@ -50,12 +50,31 @@ namespace ProfilesServiceAPI.Endpoints
                 }
             });
 
-            app.MapPost("/api/users/reg", async (HttpContext context, 
+            app.MapPost("/api/users/regUser", async (HttpContext context, 
                 [FromBody] RegistrRequest request) =>
             {
                 try
                 {
                     await Task.CompletedTask;
+                    return Results.Ok();
+                }
+                catch
+                {
+                    return Results.BadRequest("error");
+                }
+            });
+
+            app.MapPost("/api/users/regLoginUser", async (HttpContext context,
+                [FromBody] RegistrLoginRequest request,
+                [FromServices] ILoginUsersService userService) =>
+            {
+                try
+                {
+                    var user = LoginUsers.Create(request.Email, request.Password);
+                    if (!user.IsSuccess) return Results.BadRequest(user.Error);
+                    if (await userService.CheckAsync(user.Value.Email))
+                        return Results.BadRequest("email is have");
+                    Guid idUser = await userService.AddAsync(user.Value);
                     return Results.Ok();
                 }
                 catch
