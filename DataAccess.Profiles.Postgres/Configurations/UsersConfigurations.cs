@@ -1,6 +1,7 @@
 ﻿using DataAccess.Profiles.Postgres.Models;
 using DattingService.Core.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Newtonsoft.Json.Linq;
 
@@ -28,7 +29,11 @@ namespace DataAccess.Profiles.Postgres.Configurations
                 .HasColumnType("jsonb")
                 .HasConversion(
                     v => v.ToString(),
-                    v => JArray.Parse(v ?? "[]"));
+                    v => JArray.Parse(v ?? "[]"),
+                    new ValueComparer<JArray>(
+                    (l, r) => JToken.DeepEquals(l, r), 
+                    c => c.GetHashCode(),              
+                    c => new JArray(c)));
             builder.Property(a => a.IsActive)
                 .IsRequired();
             builder.Property(a => a.IsVerify)

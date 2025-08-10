@@ -17,12 +17,12 @@ namespace ProfilesServiceAPI.Repositories
             _context = context;
         }
 
-        public async Task<bool> VerifyAsync(string email, string password)
+        public async Task<Guid?> VerifyAsync(string email, string password)
         {
-            if (string.IsNullOrEmpty(email)) return false;
-            if (string.IsNullOrEmpty(password)) return false;
+            if (string.IsNullOrEmpty(email)) return null;
+            if (string.IsNullOrEmpty(password)) return null;
             var result = await _context.LoginUsers.FirstOrDefaultAsync(a => a.Email == email);
-            if (result == null) return false;
+            if (result == null) return null;
 
             string passwordHash = string.Empty;
             byte[] bytes = Encoding.UTF8.GetBytes(password);
@@ -30,9 +30,9 @@ namespace ProfilesServiceAPI.Repositories
             byte[] hashBytes = sha256.ComputeHash(bytes);
             passwordHash = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
 
-            if (passwordHash != password) return false;
+            if (passwordHash != password) return null;
 
-            return true;
+            return result.Id;
         }
 
         public async Task<Guid> AddAsync(LoginUsers user)

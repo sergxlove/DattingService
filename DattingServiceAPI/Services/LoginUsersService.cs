@@ -11,7 +11,7 @@ namespace ProfilesServiceAPI.Services
             _repository = repository;
         }
 
-        public async Task<bool> VerifyAsync(string email, string password)
+        public async Task<Guid?> VerifyAsync(string email, string password)
         {
             return await _repository.VerifyAsync(email, password);
         }
