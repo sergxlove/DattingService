@@ -5,14 +5,14 @@ namespace DataAccess.Photo.MongoDB
 {
     public class PhotoDbContext 
     {
-        private readonly MongoClient _client;
+        private readonly IMongoClient _client;
 
         public IMongoCollection<Photos> PhotosCollection { get; set; }
         public IMongoDatabase Database { get; set; }
 
-        public PhotoDbContext(string connectionString = "mongodb://localhost:27017", string nameDatabase = "photo")
+        public PhotoDbContext(IMongoClient client, string nameDatabase = "photo")
         {
-            _client = new MongoClient(connectionString);
+            _client = client;
             Database = _client.GetDatabase(nameDatabase);
             var collections = Database.ListCollectionNames().ToList();
             List<Task> tasks = new List<Task>();

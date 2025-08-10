@@ -2,7 +2,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace DattingService.Core.model
+namespace DattingService.Core.Models
 {
     public class LoginUsers
     {

@@ -8,20 +8,20 @@ using System.Text;
 
 namespace ProfilesServiceAPI.Repositories
 {
-    public class UsersLoginRepository : IUsersLoginRepository
+    public class LoginUsersRepository : ILoginUsersRepository
     {
-        public UsersLoginRepository(ProfilesDbContext dbContext)
-        {
-            _context = dbContext;
-        }
-
         private readonly ProfilesDbContext _context;
 
-        public async Task<bool> VerifyAsync(string username, string password)
+        public LoginUsersRepository(ProfilesDbContext context)
         {
-            if (string.IsNullOrEmpty(username)) return false;
+            _context = context;
+        }
+
+        public async Task<bool> VerifyAsync(string email, string password)
+        {
+            if (string.IsNullOrEmpty(email)) return false;
             if (string.IsNullOrEmpty(password)) return false;
-            var result = await _context.UsersLogin.FirstOrDefaultAsync(a => a.Username == username);
+            var result = await _context.LoginUsers.FirstOrDefaultAsync(a => a.Email == email);
             if (result == null) return false;
 
             string passwordHash = string.Empty;
@@ -35,43 +35,44 @@ namespace ProfilesServiceAPI.Repositories
             return true;
         }
 
-        public async Task<Guid> AddAsync(UsersDataForLogin user)
+        public async Task<Guid> AddAsync(LoginUsers user)
         {
-            UserDataForLoginEntity userEntity = new UserDataForLoginEntity()
+            LoginUsersEntity userEntity = new LoginUsersEntity()
             {
                 Id = user.Id,
-                Username = user.Username,
+                Email = user.Email,
                 Password = user.Password,
             };
-            await _context.UsersLogin.AddAsync(userEntity);
+            await _context.LoginUsers.AddAsync(userEntity);
             await _context.SaveChangesAsync();
             return userEntity.Id;
         }
 
-        public async Task<int> DeleteAsync(string username)
+        public async Task<int> DeleteAsync(string email)
         {
-            return await _context.UsersLogin
+            return await _context.LoginUsers
                 .AsNoTracking()
-                .Where(a => a.Username == username)
+                .Where(a => a.Email == email)
                 .ExecuteDeleteAsync();
         }
 
-        public async Task<bool> CheckAsync(string username)
+        public async Task<bool> CheckAsync(string email)
         {
-            var result = await _context.UsersLogin
+            var result = await _context.LoginUsers
                 .AsNoTracking()
-                .FirstOrDefaultAsync(a => a.Username == username);
+                .FirstOrDefaultAsync(a => a.Email == email);
             if (result is null) return false;
             return true;
         }
 
-        public async Task<int> UpdatePasswordAsync(UsersDataForLogin user)
+        public async Task<int> UpdatePasswordAsync(LoginUsers user)
         {
-            return await _context.UsersLogin
+            return await _context.LoginUsers
                 .AsNoTracking()
-                .Where(a => a.Username == user.Username)
+                .Where(a => a.Email == user.Email)
                 .ExecuteUpdateAsync(a =>
                 a.SetProperty(a => a.Password, user.Password));
         }
+
     }
 }

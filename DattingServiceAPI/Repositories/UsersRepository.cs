@@ -21,8 +21,9 @@ namespace ProfilesServiceAPI.Repositories
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.Id == id);
             if (result == null) return null;
-            return Users.Create(result.Id,result.Name, result.Age, result.Description, result.City, 
-                result.PhotoURL, result.IsActive).user!;
+            var user = Users.Create(result.Id, result.Name, result.Age, result.Target,
+                result.Description, result.City, result.PhotoURL, result.IsActive, result.IsVerify);
+            return user.Value;
         }
 
         public async Task<Guid> AddAsync(Users user)
@@ -32,10 +33,12 @@ namespace ProfilesServiceAPI.Repositories
                 Id = user.Id,
                 Name = user.Name,
                 Age = user.Age,
+                Target = user.Target,
                 Description = user.Description,
                 City = user.City,
                 PhotoURL = user.PhotoURL,
                 IsActive = user.IsActive,
+                IsVerify = user.IsVerify
             };
 
             await _context.Users.AddAsync(userEntity);
@@ -58,6 +61,15 @@ namespace ProfilesServiceAPI.Repositories
                 .Where (a => a.Id == id)
                 .ExecuteUpdateAsync(a => 
                     a.SetProperty(b => b.IsActive, true));
+        }
+
+        public async Task<int> VerifyAsync(Guid id)
+        {
+            return await _context.Users
+                .AsNoTracking()
+                .Where(a => a.Id == id)
+                .ExecuteUpdateAsync(a =>
+                    a.SetProperty(b => b.IsVerify, true));
         }
 
         public async Task<int> InactiveAsync(Guid id)

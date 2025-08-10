@@ -1,86 +1,79 @@
-﻿namespace DattingService.Core.Models
+﻿using Newtonsoft.Json.Linq;
+
+namespace DattingService.Core.Models
 {
     public class Users
     {
-        public const int MIN_LENGTH_STRING = 1;
-        public const int MAX_LENGTH_STRING = 40;
-        public const int MAX_LENGTH_DESCRIPTION = 200;
-        public Guid Id { get; }
+        public const int MIN_LENGTH_NAME = 2;
+        public const int MAX_LENGTH_NAME = 20;
+        public const int MIN_AGE = 18;
+        public const int MAX_AGE = 100;
+        public const int MAX_LENGTH_DESCRIPTION = 250;
 
-        public string Name { get; } = string.Empty;
+        public Guid Id { get; private set; }
 
-        public int Age { get;}
+        public string Name { get; private set; } = string.Empty;
 
-        public string Description { get; } = string.Empty;
+        public int Age { get; private set; }
 
-        public string City { get; } = string.Empty;
+        public string Target { get; private set; } = string.Empty;
 
-        public string PhotoURL { get; } = string.Empty;
+        public string Description { get; private set; } = string.Empty;
 
-        public bool IsActive { get; } 
+        public string City { get; private set; } = string.Empty;
 
-        public static (Users? user, string error) Create(Guid id,string name, int age,
-            string description, string city, string photoURL, bool isActive)
+        public JArray PhotoURL { get; private set; } = new JArray();
+
+        public bool IsActive { get; private set; }
+
+        public bool IsVerify {  get; private set; }
+
+        public static Result<Users> Create(Guid id, string name, int age, string target,
+            string description, string city, JArray photoUrl, bool isActive, bool isVerify)
         {
-            Users? users = null;
-            string error = string.Empty;
-
+            if (id == Guid.Empty)
+                return Result<Users>.Failure("id is empty");
             if (string.IsNullOrEmpty(name))
-            {
-                error = "name is null";
-                return (users, error);
-            }
-
-            if(string.IsNullOrEmpty(description))
-            {
-                error = "description is null";
-                return (users, error);
-            }
-
-            if(string.IsNullOrEmpty(city))
-            {
-                error = "city is null";
-                return (users, error);
-            }
-
-            if(age < 18 || age > 100)
-            {
-                error = "age invalid";
-                return (users, error);
-            }
-
-            if (name.Length < MIN_LENGTH_STRING || name.Length > MAX_LENGTH_STRING)
-            {
-                error = "name invalid";
-                return (users, error);
-            }
-
-            if(description.Length > MAX_LENGTH_DESCRIPTION)
-            {
-                error = "description invalid";
-                return (users, error);
-            }
-
-            if(city.Length < MIN_LENGTH_STRING ||  city.Length > MAX_LENGTH_STRING)
-            {
-                error = "city is null";
-                return (users, error);
-            }
-
-            users = new Users(id, name, age, description, city, photoURL, isActive);
-            return (users, error);
+                return Result<Users>.Failure("name is empty");
+            if (string.IsNullOrEmpty(city))
+                return Result<Users>.Failure("city is empty");
+            if (name.Length < MIN_LENGTH_NAME || name.Length > MAX_LENGTH_NAME)
+                return Result<Users>.Failure($"name need is {MIN_LENGTH_NAME} - " +
+                    $"{MAX_LENGTH_NAME} symbols");
+            if (age < MIN_AGE || age > MAX_AGE)
+                return Result<Users>.Failure($"age need is {MIN_AGE} - {MAX_AGE}");
+            if (description.Length > MAX_LENGTH_DESCRIPTION)
+                return Result<Users>.Failure($"description need is >250 symbols");
+            return Result<Users>.Success(new(id, name, age, target, description, city,
+                photoUrl,isActive, isVerify));
         }
 
-        private Users(Guid id,string name, int age,
-            string description, string city, string photoURL, bool isActive)
+        private Users(Guid id, string name, int age, string target,string description,
+            string city, JArray photoUrl, bool isActive, bool isVerify)
         {
             Id = id;
             Name = name;
             Age = age;
+            Target = target;
             Description = description;
             City = city;
-            PhotoURL = photoURL;
+            PhotoURL = photoUrl;
             IsActive = isActive;
+            IsVerify = isVerify;
+        }
+
+        public bool AddUrlPhoto(string url)
+        {
+            if(PhotoURL?.Count > 3) return false;
+            PhotoURL?.Add(url);
+            return true;
+        }
+
+        public bool RemoveUrlPhoto(string url)
+        {
+            var result = PhotoURL?.Remove(url);
+            if (result == false) return false;
+            return true;
         }
     }
 }
