@@ -64,25 +64,6 @@ namespace ProfilesServiceAPI.Endpoints
                 }
             });
 
-            app.MapPost("/api/users/regLoginUser", async (HttpContext context,
-                [FromBody] RegistrLoginRequest request,
-                [FromServices] ILoginUsersService userService) =>
-            {
-                try
-                {
-                    var user = LoginUsers.Create(request.Email, request.Password);
-                    if (!user.IsSuccess) return Results.BadRequest(user.Error);
-                    if (await userService.CheckAsync(user.Value.Email))
-                        return Results.BadRequest("email is have");
-                    Guid idUser = await userService.AddAsync(user.Value);
-                    return Results.Ok();
-                }
-                catch
-                {
-                    return Results.BadRequest("error");
-                }
-            });
-
             app.MapDelete("/api/users/delete", (HttpContext context) =>
             {
                 return Results.Ok();
