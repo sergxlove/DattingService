@@ -62,6 +62,12 @@ namespace DattingService.Core.Models
             IsVerify = isVerify;
         }
 
+        public static Result<Users> Create(Guid id, string name, int age, string target, string description, 
+            string city, bool isActive, bool isVerify)
+        {
+            return Create(id, name, age, target, description, city, new JArray() ,isActive, isVerify);
+        }
+
         public bool AddUrlPhoto(string url)
         {
             if(PhotoURL?.Count > 3) return false;

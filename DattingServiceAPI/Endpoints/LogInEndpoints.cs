@@ -1,5 +1,6 @@
 ﻿using DattingService.Core.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Internal;
 using ProfilesServiceAPI.Abstractions;
 using ProfilesServiceAPI.Requests;
 using System.Security.Claims;
@@ -51,11 +52,19 @@ namespace ProfilesServiceAPI.Endpoints
             });
 
             app.MapPost("/api/users/regUser", async (HttpContext context, 
-                [FromBody] RegistrRequest request) =>
+                [FromBody] RegistrRequest request,
+                [FromServices] IRegistrUserService registrService) =>
             {
                 try
                 {
                     await Task.CompletedTask;
+                    var idStr = context.User.FindFirst(ClaimTypes.Sid)?.Value;
+                    if (idStr == string.Empty) return Results.BadRequest("error");
+                    Guid id = Guid.Parse(idStr!);
+                    var usersResult = Users.Create(id, request.Name, request.Age, request.Target,
+                        request.Description, request.City, true, true);
+                    if (!usersResult.IsSuccess) return Results.BadRequest(usersResult.Error);
+                    await registrService.RegistrationAsync(usersResult.Value);
                     return Results.Ok();
                 }
                 catch
