@@ -1,10 +1,11 @@
 ﻿using DataAccess.Profiles.Postgres.Abstractions;
+using DattingService.Core.Models;
 using ProfilesServiceAPI.Abstractions;
 using ProfilesServiceAPI.Requests;
 
 namespace ProfilesServiceAPI.Services
 {
-    public class RegistrUserService
+    public class RegistrUserService : IRegistrUserService
     {
         private readonly ILoginUsersRepository _loginUserRep;
         private readonly IUsersRepository _userRep;
@@ -12,21 +13,26 @@ namespace ProfilesServiceAPI.Services
         private readonly ITransactionsWork _transactions;
 
         public RegistrUserService(ILoginUsersRepository loginUserRep, IUsersRepository userRep,
-            ITempLoginUsersRepository tempLoginUserRep,ITransactionsWork transactions)
+            ITempLoginUsersRepository tempLoginUserRep, ITransactionsWork transactions)
         {
-            _loginUserRep = loginUserRep;   
+            _loginUserRep = loginUserRep;
             _userRep = userRep;
             _tempLoginUserRep = tempLoginUserRep;
             _transactions = transactions;
         }
 
-        public async Task<bool> RegistrationAsync(RegistrRequest request)
+        public async Task<bool> RegistrationAsync(Users user)
         {
             try
             {
                 await _transactions.BeginTransactionAsync();
-
-
+                var tempUser = await _tempLoginUserRep.GetAsync(user.Id);
+                if (tempUser is null) throw new Exception();
+                LoginUsers loginUser = LoginUsers.Create(tempUser.Email, tempUser.Password).Value;
+                var result = await _loginUserRep.AddAsync(loginUser);
+                if (result != user.Id) throw new Exception();
+                result = await _userRep.AddAsync(user);
+                if (result != user.Id) throw new Exception();
                 await _transactions.CommitAsync();
                 return true;
             }

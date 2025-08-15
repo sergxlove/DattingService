@@ -2,6 +2,8 @@ using DataAccess.Photo.MongoDB;
 using DataAccess.Photo.MongoDB.Abstractions;
 using DataAccess.Photo.MongoDB.Repositories;
 using DataAccess.Profiles.Postgres;
+using DataAccess.Profiles.Postgres.Abstractions;
+using DataAccess.Profiles.Postgres.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,6 +43,10 @@ namespace ProfilesServiceAPI
             builder.Services.AddScoped<ILoginUsersService, LoginUsersService>();
             builder.Services.AddScoped<IInterestsRepository, InterestsRepository>();
             builder.Services.AddScoped<IInterestsService, InterestsService>();
+            builder.Services.AddScoped<ITempLoginUsersRepository, TempLoginUsersRepository>();
+            builder.Services.AddScoped<ITempLoginUsersService, TempLoginUsersService>();
+            builder.Services.AddScoped<ITransactionsWork, TransactionsWork>();
+            builder.Services.AddScoped<IRegistrUserService, RegistrUserService>();
             builder.Services.AddSingleton<IMongoClient>(_ =>
                 new MongoClient("mongodb://localhost:27017"));
             builder.Services.AddScoped<PhotoDbContext>(provider =>
@@ -52,6 +58,7 @@ namespace ProfilesServiceAPI
             builder.Services.AddScoped<IPhotoRepository, PhotoRepository>();
             builder.Services.AddScoped<IPhotosService, PhotosService>();
             builder.Services.AddScoped<IJwtProviderService, JwtProviderService>();
+
             builder.WebHost.ConfigureKestrel(options =>
             {
                 options.Limits.MaxRequestBodySize = 10 * 1024 * 1024; 
