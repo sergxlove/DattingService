@@ -5,10 +5,10 @@ namespace ProfilesServiceAPI.Abstractions
 {
     public interface IInterestsService
     {
-        Task<Guid> AddAsync(Interests interest);
-        Task<bool> CheckAsync(Guid id);
-        Task<int> DeleteAsync(Guid id);
-        Task<JArray> GetAsync(Guid id);
-        Task<int> UpdateAsync(Interests interest);
+        Task<Guid> AddAsync(Interests interest, CancellationToken token);
+        Task<bool> CheckAsync(Guid id, CancellationToken token);
+        Task<int> DeleteAsync(Guid id, CancellationToken token);
+        Task<JArray> GetAsync(Guid id, CancellationToken token);
+        Task<int> UpdateAsync(Interests interest, CancellationToken token);
     }
 }

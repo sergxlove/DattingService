@@ -1,6 +1,5 @@
 ﻿using DattingService.Core.Models;
 using ProfilesServiceAPI.Abstractions;
-using ProfilesServiceAPI.Repositories;
 
 namespace ProfilesServiceAPI.Services
 { 
@@ -13,34 +12,34 @@ namespace ProfilesServiceAPI.Services
 
         private readonly IUsersRepository _repository;
 
-        public async Task<Users?> GetByIdAsync(Guid id)
+        public async Task<Users?> GetByIdAsync(Guid id, CancellationToken token)
         {
-            return await _repository.GetByIdAsync(id);
+            return await _repository.GetByIdAsync(id, token);
         }
 
-        public async Task<Guid> AddAsync(Users user)
+        public async Task<Guid> AddAsync(Users user, CancellationToken token)
         {
-            return await _repository.AddAsync(user);
+            return await _repository.AddAsync(user, token);
         }
 
-        public async Task<int> DeleteAsync(Guid id)
+        public async Task<int> DeleteAsync(Guid id, CancellationToken token)
         {
-            return await _repository.DeleteAsync(id);
+            return await _repository.DeleteAsync(id, token);
         }
 
-        public async Task<int> ActiveAsync(Guid id)
+        public async Task<int> ActiveAsync(Guid id, CancellationToken token)
         {
-            return await _repository.ActiveAsync(id);
+            return await _repository.ActiveAsync(id, token);
         }
 
-        public async Task<int> VerifyAsync(Guid id)
+        public async Task<int> VerifyAsync(Guid id, CancellationToken token)
         {
-            return await _repository.VerifyAsync(id);
+            return await _repository.VerifyAsync(id, token);
         }
 
-        public async Task<int> InactiveAsync(Guid id)
+        public async Task<int> InactiveAsync(Guid id, CancellationToken token)
         {
-            return await _repository.InactiveAsync(id);
+            return await _repository.InactiveAsync(id, token);
         }
     }
 }

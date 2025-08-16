@@ -61,6 +61,30 @@ namespace DataAccess.Profiles.Postgres.Migrations
                     b.ToTable("loginUsers", (string)null);
                 });
 
+            modelBuilder.Entity("DataAccess.Profiles.Postgres.Models.TempLoginUsersEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.ToTable("tempLoginUsers", (string)null);
+                });
+
             modelBuilder.Entity("DataAccess.Profiles.Postgres.Models.UsersEntity", b =>
                 {
                     b.Property<Guid>("Id")

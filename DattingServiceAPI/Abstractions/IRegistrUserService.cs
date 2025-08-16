@@ -4,6 +4,6 @@ namespace ProfilesServiceAPI.Abstractions
 {
     public interface IRegistrUserService
     {
-        Task<bool> RegistrationAsync(Users user);
+        Task<bool> RegistrationAsync(Users user, CancellationToken token);
     }
 }

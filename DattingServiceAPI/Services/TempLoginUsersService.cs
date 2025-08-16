@@ -11,19 +11,19 @@ namespace ProfilesServiceAPI.Services
             _repository = repository;
         }
 
-        public async Task<Guid> AddAsync(LoginUsers user)
+        public async Task<Guid> AddAsync(LoginUsers user, CancellationToken token)
         {
-            return await _repository.AddAsync(user);
+            return await _repository.AddAsync(user, token);
         }
 
-        public async Task<int> DeleteAsync(string email)
+        public async Task<int> DeleteAsync(string email, CancellationToken token)
         {
-            return await _repository.DeleteAsync(email);
+            return await _repository.DeleteAsync(email, token);
         }
 
-        public async Task<LoginUsers?> GetAsync(Guid id)
+        public async Task<LoginUsers?> GetAsync(Guid id, CancellationToken token)
         {
-            return await _repository.GetAsync(id);
+            return await _repository.GetAsync(id, token);
         }
     }
 }
