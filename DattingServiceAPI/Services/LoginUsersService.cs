@@ -11,29 +11,29 @@ namespace ProfilesServiceAPI.Services
             _repository = repository;
         }
 
-        public async Task<Guid?> VerifyAsync(string email, string password)
+        public async Task<Guid?> VerifyAsync(string email, string password, CancellationToken token)
         {
-            return await _repository.VerifyAsync(email, password);
+            return await _repository.VerifyAsync(email, password, token);
         }
 
-        public async Task<Guid> AddAsync(LoginUsers user)
+        public async Task<Guid> AddAsync(LoginUsers user, CancellationToken token)
         {
-            return await _repository.AddAsync(user);
+            return await _repository.AddAsync(user, token);
         }
 
-        public async Task<int> DeleteAsync(string email)
+        public async Task<int> DeleteAsync(string email, CancellationToken token)
         {
-            return await _repository.DeleteAsync(email);
+            return await _repository.DeleteAsync(email, token);
         }
 
-        public async Task<bool> CheckAsync(string email)
+        public async Task<bool> CheckAsync(string email, CancellationToken token)
         {
-            return await _repository.CheckAsync(email);
+            return await _repository.CheckAsync(email, token);
         }
 
-        public async Task<int> UpdatePasswordAsync(LoginUsers user)
+        public async Task<int> UpdatePasswordAsync(LoginUsers user, CancellationToken token)
         {
-            return await _repository.UpdatePasswordAsync(user);
+            return await _repository.UpdatePasswordAsync(user, token);
         }
 
     }

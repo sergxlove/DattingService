@@ -6,7 +6,6 @@ using DataAccess.Profiles.Postgres.Abstractions;
 using DataAccess.Profiles.Postgres.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using ProfilesServiceAPI.Abstractions;
@@ -34,9 +33,7 @@ namespace ProfilesServiceAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<ProfilesDbContext>(options =>
-                options.UseNpgsql(builder.Configuration
-                .GetSection("DataAccess.Profiles.Postgres:Connections:ConnectionStrings")
-                .Value));
+                options.UseNpgsql("User ID=postgres;Password=123;Host=localhost;Port=5432;Database=db;"));
             builder.Services.AddScoped<IUsersRepository, UsersRepository>();
             builder.Services.AddScoped<IUsersService, UsersService>();
             builder.Services.AddScoped<ILoginUsersRepository, LoginUsersRepository>();

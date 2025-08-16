@@ -14,7 +14,7 @@ namespace ProfilesServiceAPI.Repositories
             _context = context;
         }
 
-        public async Task<Guid> AddAsync(LoginUsers user)
+        public async Task<Guid> AddAsync(LoginUsers user, CancellationToken token)
         {
             LoginUsersEntity userEntity = new LoginUsersEntity()
             {
@@ -22,24 +22,24 @@ namespace ProfilesServiceAPI.Repositories
                 Email = user.Email,
                 Password = user.Password,
             };
-            await _context.LoginUsers.AddAsync(userEntity);
-            await _context.SaveChangesAsync();
+            await _context.LoginUsers.AddAsync(userEntity, token);
+            await _context.SaveChangesAsync(token);
             return userEntity.Id;
         }
 
-        public async Task<int> DeleteAsync(string email)
+        public async Task<int> DeleteAsync(string email, CancellationToken token)
         {
             return await _context.LoginUsers
                 .AsNoTracking()
                 .Where(a => a.Email == email)
-                .ExecuteDeleteAsync();
+                .ExecuteDeleteAsync(token);
         }
 
-        public async Task<LoginUsers?> GetAsync(Guid id)
+        public async Task<LoginUsers?> GetAsync(Guid id, CancellationToken token)
         {
             var result = await _context.LoginUsers
                 .AsNoTracking()
-                .FirstOrDefaultAsync(a => a.Id == id);
+                .FirstOrDefaultAsync(a => a.Id == id, token);
             if (result == null) return null;
             var user = LoginUsers.Create(result.Id, result.Email, result.Password);
             if (user.IsSuccess) return user.Value;

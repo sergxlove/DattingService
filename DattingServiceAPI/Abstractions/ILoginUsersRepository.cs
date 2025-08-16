@@ -4,10 +4,10 @@ namespace ProfilesServiceAPI.Abstractions
 {
     public interface ILoginUsersRepository
     {
-        Task<Guid> AddAsync(LoginUsers user);
-        Task<bool> CheckAsync(string email);
-        Task<int> DeleteAsync(string email);
-        Task<int> UpdatePasswordAsync(LoginUsers user);
-        Task<Guid?> VerifyAsync(string email, string password);
+        Task<Guid> AddAsync(LoginUsers user, CancellationToken token);
+        Task<bool> CheckAsync(string email, CancellationToken token);
+        Task<int> DeleteAsync(string email, CancellationToken token);
+        Task<int> UpdatePasswordAsync(LoginUsers user, CancellationToken token);
+        Task<Guid?> VerifyAsync(string email, string password, CancellationToken token);
     }
 }

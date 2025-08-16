@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataAccess.Profiles.Postgres.Migrations
 {
     [DbContext(typeof(ProfilesDbContext))]
-    [Migration("20250810122845_AddNewModels")]
-    partial class AddNewModels
+    [Migration("20250816130302_firstBld")]
+    partial class firstBld
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -62,6 +62,30 @@ namespace DataAccess.Profiles.Postgres.Migrations
                         .IsUnique();
 
                     b.ToTable("loginUsers", (string)null);
+                });
+
+            modelBuilder.Entity("DataAccess.Profiles.Postgres.Models.TempLoginUsersEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.ToTable("tempLoginUsers", (string)null);
                 });
 
             modelBuilder.Entity("DataAccess.Profiles.Postgres.Models.UsersEntity", b =>

@@ -15,18 +15,18 @@ namespace ProfilesServiceAPI.Repositories
 
         private readonly ProfilesDbContext _context;
 
-        public async Task<Users?> GetByIdAsync(Guid id)
+        public async Task<Users?> GetByIdAsync(Guid id, CancellationToken token)
         {
             var result = await _context.Users
                 .AsNoTracking()
-                .FirstOrDefaultAsync(a => a.Id == id);
+                .FirstOrDefaultAsync(a => a.Id == id, token);
             if (result == null) return null;
             var user = Users.Create(result.Id, result.Name, result.Age, result.Target,
                 result.Description, result.City, result.PhotoURL, result.IsActive, result.IsVerify);
             return user.Value;
         }
 
-        public async Task<Guid> AddAsync(Users user)
+        public async Task<Guid> AddAsync(Users user, CancellationToken token)
         {
             UsersEntity userEntity = new UsersEntity()
             {
@@ -41,44 +41,44 @@ namespace ProfilesServiceAPI.Repositories
                 IsVerify = user.IsVerify
             };
 
-            await _context.Users.AddAsync(userEntity);
-            await _context.SaveChangesAsync();
+            await _context.Users.AddAsync(userEntity, token);
+            await _context.SaveChangesAsync(token);
             return userEntity.Id;
         }
 
-        public async Task<int> DeleteAsync(Guid id)
+        public async Task<int> DeleteAsync(Guid id, CancellationToken token)
         {
             return await _context.Users
                 .AsNoTracking()
                 .Where(a => a.Id == id)
-                .ExecuteDeleteAsync();
+                .ExecuteDeleteAsync(token);
         }
 
-        public async Task<int> ActiveAsync(Guid id)
+        public async Task<int> ActiveAsync(Guid id, CancellationToken token)
         {
             return await _context.Users
                 .AsNoTracking()
                 .Where (a => a.Id == id)
                 .ExecuteUpdateAsync(a => 
-                    a.SetProperty(b => b.IsActive, true));
+                    a.SetProperty(b => b.IsActive, true), token);
         }
 
-        public async Task<int> VerifyAsync(Guid id)
+        public async Task<int> VerifyAsync(Guid id, CancellationToken token)
         {
             return await _context.Users
                 .AsNoTracking()
                 .Where(a => a.Id == id)
                 .ExecuteUpdateAsync(a =>
-                    a.SetProperty(b => b.IsVerify, true));
+                    a.SetProperty(b => b.IsVerify, true), token);
         }
 
-        public async Task<int> InactiveAsync(Guid id)
+        public async Task<int> InactiveAsync(Guid id, CancellationToken token)
         {
             return await _context.Users
                 .AsNoTracking()
                 .Where(a => a.Id == id)
                 .ExecuteUpdateAsync(a =>
-                    a.SetProperty(b => b.IsActive, false));
+                    a.SetProperty(b => b.IsActive, false), token);
         }
     }
 }

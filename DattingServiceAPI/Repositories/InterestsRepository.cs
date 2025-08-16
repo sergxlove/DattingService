@@ -16,49 +16,49 @@ namespace ProfilesServiceAPI.Repositories
             _context = context;
         }
 
-        public async Task<JArray> GetAsync(Guid id)
+        public async Task<JArray> GetAsync(Guid id, CancellationToken token)
         {
             var result = await _context.Interests
                 .AsNoTracking()
-                .FirstOrDefaultAsync(a => a.Id == id);
+                .FirstOrDefaultAsync(a => a.Id == id, token);
             if (result is null) return new JArray();
             return result.SelectInterests;
         }
 
-        public async Task<Guid> AddAsync(Interests interest)
+        public async Task<Guid> AddAsync(Interests interest, CancellationToken token)
         {
             InterestsEntity interestsEntity = new()
             {
                 Id = interest.Id,
                 SelectInterests = interest.SelectInterests,
             };
-            await _context.Interests.AddAsync(interestsEntity);
-            await _context.SaveChangesAsync();
+            await _context.Interests.AddAsync(interestsEntity, token);
+            await _context.SaveChangesAsync(token);
             return interestsEntity.Id;
         }
 
-        public async Task<int> UpdateAsync(Interests interest)
+        public async Task<int> UpdateAsync(Interests interest, CancellationToken token)
         {
             return await _context.Interests
                 .AsNoTracking()
                 .Where(a => a.Id == interest.Id)
                 .ExecuteUpdateAsync(a =>
-                a.SetProperty(a => a.SelectInterests, interest.SelectInterests));
+                a.SetProperty(a => a.SelectInterests, interest.SelectInterests), token);
         }
 
-        public async Task<int> DeleteAsync(Guid id)
+        public async Task<int> DeleteAsync(Guid id, CancellationToken token)
         {
             return await _context.Interests
                 .AsNoTracking()
                 .Where(a => a.Id == id)
-                .ExecuteDeleteAsync();
+                .ExecuteDeleteAsync(token);
         }
 
-        public async Task<bool> CheckAsync(Guid id)
+        public async Task<bool> CheckAsync(Guid id, CancellationToken token)
         {
             var result = await _context.Interests
                 .AsNoTracking()
-                .FirstOrDefaultAsync(a => a.Id == id);
+                .FirstOrDefaultAsync(a => a.Id == id, token);
             if (result is null) return false;
             return true;
         }

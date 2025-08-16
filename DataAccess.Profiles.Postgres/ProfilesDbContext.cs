@@ -26,7 +26,7 @@ namespace DataAccess.Profiles.Postgres
             modelBuilder.ApplyConfiguration(new LoginUsersConfigurations());
             modelBuilder.ApplyConfiguration(new InterestsConfigurations());
             modelBuilder.ApplyConfiguration(new SwipesConfigurations());
-            modelBuilder.ApplyConfiguration(new TempLoginUsersConfigurations())
+            modelBuilder.ApplyConfiguration(new TempLoginUsersConfigurations());
             base.OnModelCreating(modelBuilder);
         }
     }

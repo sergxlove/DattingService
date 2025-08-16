@@ -13,29 +13,29 @@ namespace ProfilesServiceAPI.Services
             _repository = repository;
         }
 
-        public async Task<JArray> GetAsync(Guid id)
+        public async Task<JArray> GetAsync(Guid id, CancellationToken token)
         {
-            return await _repository.GetAsync(id);
+            return await _repository.GetAsync(id, token);
         }
 
-        public async Task<Guid> AddAsync(Interests interest)
+        public async Task<Guid> AddAsync(Interests interest, CancellationToken token)
         {
-            return await _repository.AddAsync(interest);
+            return await _repository.AddAsync(interest, token);
         }
 
-        public async Task<int> UpdateAsync(Interests interest)
+        public async Task<int> UpdateAsync(Interests interest, CancellationToken token)
         {
-            return await _repository.UpdateAsync(interest);
+            return await _repository.UpdateAsync(interest, token);
         }
 
-        public async Task<int> DeleteAsync(Guid id)
+        public async Task<int> DeleteAsync(Guid id, CancellationToken token)
         {
-            return await _repository.DeleteAsync(id);
+            return await _repository.DeleteAsync(id, token);
         }
 
-        public async Task<bool> CheckAsync(Guid id)
+        public async Task<bool> CheckAsync(Guid id, CancellationToken token)
         {
-            return await _repository.CheckAsync(id);
+            return await _repository.CheckAsync(id, token);
         }
     }
 }

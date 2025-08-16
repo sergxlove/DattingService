@@ -21,17 +21,17 @@ namespace ProfilesServiceAPI.Services
             _transactions = transactions;
         }
 
-        public async Task<bool> RegistrationAsync(Users user)
+        public async Task<bool> RegistrationAsync(Users user, CancellationToken token)
         {
             try
             {
                 await _transactions.BeginTransactionAsync();
-                var tempUser = await _tempLoginUserRep.GetAsync(user.Id);
+                var tempUser = await _tempLoginUserRep.GetAsync(user.Id, token);
                 if (tempUser is null) throw new Exception();
                 LoginUsers loginUser = LoginUsers.Create(tempUser.Email, tempUser.Password).Value;
-                var result = await _loginUserRep.AddAsync(loginUser);
+                var result = await _loginUserRep.AddAsync(loginUser, token);
                 if (result != user.Id) throw new Exception();
-                result = await _userRep.AddAsync(user);
+                result = await _userRep.AddAsync(user, token);
                 if (result != user.Id) throw new Exception();
                 await _transactions.CommitAsync();
                 return true;

@@ -17,11 +17,11 @@ namespace ProfilesServiceAPI.Repositories
             _context = context;
         }
 
-        public async Task<Guid?> VerifyAsync(string email, string password)
+        public async Task<Guid?> VerifyAsync(string email, string password, CancellationToken token)
         {
             if (string.IsNullOrEmpty(email)) return null;
             if (string.IsNullOrEmpty(password)) return null;
-            var result = await _context.LoginUsers.FirstOrDefaultAsync(a => a.Email == email);
+            var result = await _context.LoginUsers.FirstOrDefaultAsync(a => a.Email == email, token);
             if (result == null) return null;
 
             string passwordHash = string.Empty;
@@ -35,7 +35,7 @@ namespace ProfilesServiceAPI.Repositories
             return result.Id;
         }
 
-        public async Task<Guid> AddAsync(LoginUsers user)
+        public async Task<Guid> AddAsync(LoginUsers user, CancellationToken token)
         {
             LoginUsersEntity userEntity = new LoginUsersEntity()
             {
@@ -43,35 +43,35 @@ namespace ProfilesServiceAPI.Repositories
                 Email = user.Email,
                 Password = user.Password,
             };
-            await _context.LoginUsers.AddAsync(userEntity);
-            await _context.SaveChangesAsync();
+            await _context.LoginUsers.AddAsync(userEntity, token);
+            await _context.SaveChangesAsync(token);
             return userEntity.Id;
         }
 
-        public async Task<int> DeleteAsync(string email)
+        public async Task<int> DeleteAsync(string email, CancellationToken token)
         {
             return await _context.LoginUsers
                 .AsNoTracking()
                 .Where(a => a.Email == email)
-                .ExecuteDeleteAsync();
+                .ExecuteDeleteAsync(token);
         }
 
-        public async Task<bool> CheckAsync(string email)
+        public async Task<bool> CheckAsync(string email, CancellationToken token)
         {
             var result = await _context.LoginUsers
                 .AsNoTracking()
-                .FirstOrDefaultAsync(a => a.Email == email);
+                .FirstOrDefaultAsync(a => a.Email == email, token);
             if (result is null) return false;
             return true;
         }
 
-        public async Task<int> UpdatePasswordAsync(LoginUsers user)
+        public async Task<int> UpdatePasswordAsync(LoginUsers user, CancellationToken token)
         {
             return await _context.LoginUsers
                 .AsNoTracking()
                 .Where(a => a.Email == user.Email)
                 .ExecuteUpdateAsync(a =>
-                a.SetProperty(a => a.Password, user.Password));
+                a.SetProperty(a => a.Password, user.Password), token);
         }
 
     }

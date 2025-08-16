@@ -1,6 +1,5 @@
 ﻿using DattingService.Core.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Internal;
 using ProfilesServiceAPI.Abstractions;
 using ProfilesServiceAPI.Requests;
 using System.Security.Claims;
@@ -20,17 +19,18 @@ namespace ProfilesServiceAPI.Endpoints
             app.MapPost("/api/users/login", async (HttpContext context,
                 [FromBody] LoginRequest request,
                 [FromServices] ILoginUsersService loginUserService,
-                [FromServices] IJwtProviderService jwtGenerate) =>
+                [FromServices] IJwtProviderService jwtGenerate,
+                CancellationToken token) =>
             {
                 try
                 {
                     if (request.Username == string.Empty || request.Password == string.Empty)
                         return Results.BadRequest("login or password is empty");
                     
-                    if (await loginUserService!.CheckAsync(request.Username))
+                    if (await loginUserService!.CheckAsync(request.Username, token))
                        return Results.BadRequest("user is not found");
 
-                    Guid? idUser = await loginUserService.VerifyAsync(request.Username, request.Password);
+                    Guid? idUser = await loginUserService.VerifyAsync(request.Username, request.Password, token);
                     if (idUser == null) return Results.BadRequest("no auth");
 
                     var claims = new List<Claim>()
@@ -38,11 +38,11 @@ namespace ProfilesServiceAPI.Endpoints
                         new Claim(ClaimTypes.Role, "user"),
                         new Claim(ClaimTypes.Sid, idUser.ToString()!),
                     };
-                    var token = jwtGenerate!.GenerateToken(new JwtRequest()
+                    var jwttoken = jwtGenerate!.GenerateToken(new JwtRequest()
                     {
                         Claims = claims
                     });
-                    context.Response.Cookies.Append("jwt", token!);
+                    context.Response.Cookies.Append("jwt", jwttoken!);
                     return Results.Ok(token!);
                 }
                 catch
@@ -51,9 +51,16 @@ namespace ProfilesServiceAPI.Endpoints
                 }
             });
 
+            app.MapPost("/api/users/regLoginUser", async (HttpContext context, 
+                CancellationToken token) =>
+            {
+                await Task.CompletedTask;
+            });
+
             app.MapPost("/api/users/regUser", async (HttpContext context, 
                 [FromBody] RegistrRequest request,
-                [FromServices] IRegistrUserService registrService) =>
+                [FromServices] IRegistrUserService registrService,
+                CancellationToken token) =>
             {
                 try
                 {
@@ -64,7 +71,7 @@ namespace ProfilesServiceAPI.Endpoints
                     var usersResult = Users.Create(id, request.Name, request.Age, request.Target,
                         request.Description, request.City, true, true);
                     if (!usersResult.IsSuccess) return Results.BadRequest(usersResult.Error);
-                    await registrService.RegistrationAsync(usersResult.Value);
+                    await registrService.RegistrationAsync(usersResult.Value, token);
                     return Results.Ok();
                 }
                 catch
