@@ -33,6 +33,7 @@ namespace ProfilesServiceAPI.Services
                 if (result != user.Id) throw new Exception();
                 result = await _userRep.AddAsync(user, token);
                 if (result != user.Id) throw new Exception();
+                await _tempLoginUserRep.DeleteAsync(tempUser.Email, token);
                 await _transactions.CommitAsync();
                 return true;
             }

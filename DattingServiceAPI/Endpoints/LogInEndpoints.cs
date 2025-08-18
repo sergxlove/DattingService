@@ -52,9 +52,38 @@ namespace ProfilesServiceAPI.Endpoints
             });
 
             app.MapPost("/api/users/regLoginUser", async (HttpContext context, 
+                [FromBody] RegLoginRequest request,
+                [FromServices] IJwtProviderService jwtGenerate,
+                [FromServices] ITempLoginUsersService tempLoginUsersService,
                 CancellationToken token) =>
             {
-                await Task.CompletedTask;
+                try
+                {
+                    if (request is null) return Results.BadRequest("request empty");
+                    if(request.Username == string.Empty || request.Password == string.Empty 
+                        || request.AgainPassword == string.Empty)
+                    {
+                        return Results.BadRequest("login or password is empty");
+                    }
+                    var user = LoginUsers.Create(request.Username, request.Password);
+                    if (!user.IsSuccess) return Results.BadRequest(user.Error);
+                    await tempLoginUsersService.AddAsync(user.Value, token);
+                    var claims = new List<Claim>()
+                    {
+                        new Claim(ClaimTypes.Role, "user"),
+                        new Claim(ClaimTypes.Sid, user.Value.Id.ToString()!),
+                    };
+                    var jwttoken = jwtGenerate!.GenerateToken(new JwtRequest()
+                    {
+                        Claims = claims
+                    });
+                    context.Response.Cookies.Append("jwt", jwttoken!);
+                    return Results.Ok(token!);
+                }
+                catch
+                {
+                    return Results.BadRequest("error");
+                }
             });
 
             app.MapPost("/api/users/regUser", async (HttpContext context, 
@@ -64,7 +93,6 @@ namespace ProfilesServiceAPI.Endpoints
             {
                 try
                 {
-                    await Task.CompletedTask;
                     var idStr = context.User.FindFirst(ClaimTypes.Sid)?.Value;
                     if (idStr == string.Empty) return Results.BadRequest("error");
                     Guid id = Guid.Parse(idStr!);
