@@ -31,7 +31,7 @@ namespace DataAccess.Photo.MongoDB.Repositories
         public async Task<long> DeleteAsync(string id)
         {
             ObjectId photoId = ObjectId.Parse(id);
-            var result = await _context.PhotosCollection.DeleteOneAsync(a => a.Id.ToString() == id);
+            var result = await _context.PhotosCollection.DeleteOneAsync(a => a.Id == photoId);
             return result.DeletedCount;
         }
 
