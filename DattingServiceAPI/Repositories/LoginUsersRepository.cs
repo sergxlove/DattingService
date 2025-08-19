@@ -30,7 +30,7 @@ namespace ProfilesServiceAPI.Repositories
             byte[] hashBytes = sha256.ComputeHash(bytes);
             passwordHash = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
 
-            if (passwordHash != password) return null;
+            if (passwordHash != result.Password) return null;
 
             return result.Id;
         }

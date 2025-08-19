@@ -27,7 +27,7 @@ namespace ProfilesServiceAPI.Endpoints
                     if (request.Username == string.Empty || request.Password == string.Empty)
                         return Results.BadRequest("login or password is empty");
                     
-                    if (await loginUserService!.CheckAsync(request.Username, token))
+                    if (!await loginUserService!.CheckAsync(request.Username, token))
                        return Results.BadRequest("user is not found");
 
                     Guid? idUser = await loginUserService.VerifyAsync(request.Username, request.Password, token);
@@ -78,7 +78,7 @@ namespace ProfilesServiceAPI.Endpoints
                         Claims = claims
                     });
                     context.Response.Cookies.Append("jwt", jwttoken!);
-                    return Results.Ok(token!);
+                    return Results.Ok(jwttoken!);
                 }
                 catch
                 {
@@ -99,8 +99,9 @@ namespace ProfilesServiceAPI.Endpoints
                     var usersResult = Users.Create(id, request.Name, request.Age, request.Target,
                         request.Description, request.City, true, true);
                     if (!usersResult.IsSuccess) return Results.BadRequest(usersResult.Error);
-                    await registrService.RegistrationAsync(usersResult.Value, token);
-                    return Results.Ok();
+                    var result = await registrService.RegistrationAsync(usersResult.Value, token);
+                    if(result) return Results.Ok();
+                    return Results.BadRequest("no reg");
                 }
                 catch
                 {

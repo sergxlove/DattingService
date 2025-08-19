@@ -16,20 +16,20 @@ namespace ProfilesServiceAPI.Repositories
 
         public async Task<Guid> AddAsync(LoginUsers user, CancellationToken token)
         {
-            LoginUsersEntity userEntity = new LoginUsersEntity()
+            TempLoginUsersEntity userEntity = new TempLoginUsersEntity()
             {
                 Id = user.Id,
                 Email = user.Email,
                 Password = user.Password,
             };
-            await _context.LoginUsers.AddAsync(userEntity, token);
+            await _context.TempLoginUsers.AddAsync(userEntity, token);
             await _context.SaveChangesAsync(token);
             return userEntity.Id;
         }
 
         public async Task<int> DeleteAsync(string email, CancellationToken token)
         {
-            return await _context.LoginUsers
+            return await _context.TempLoginUsers
                 .AsNoTracking()
                 .Where(a => a.Email == email)
                 .ExecuteDeleteAsync(token);
@@ -37,7 +37,7 @@ namespace ProfilesServiceAPI.Repositories
 
         public async Task<LoginUsers?> GetAsync(Guid id, CancellationToken token)
         {
-            var result = await _context.LoginUsers
+            var result = await _context.TempLoginUsers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.Id == id, token);
             if (result == null) return null;

@@ -28,7 +28,7 @@ namespace ProfilesServiceAPI.Services
                 await _transactions.BeginTransactionAsync();
                 var tempUser = await _tempLoginUserRep.GetAsync(user.Id, token);
                 if (tempUser is null) throw new Exception();
-                LoginUsers loginUser = LoginUsers.Create(tempUser.Email, tempUser.Password).Value;
+                LoginUsers loginUser = LoginUsers.Create(tempUser.Id,tempUser.Email, tempUser.Password).Value;
                 var result = await _loginUserRep.AddAsync(loginUser, token);
                 if (result != user.Id) throw new Exception();
                 result = await _userRep.AddAsync(user, token);
