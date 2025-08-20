@@ -36,5 +36,9 @@ namespace ProfilesServiceAPI.Services
             return await _repository.UpdatePasswordAsync(user, token);
         }
 
+        public async Task<string> GetEmailAsync(Guid id, CancellationToken token)
+        {
+            return await _repository.GetEmailAsync(id, token);
+        }
     }
 }

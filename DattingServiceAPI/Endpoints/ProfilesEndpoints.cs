@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.Data;
+﻿using DattingService.Core.Models;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using ProfilesServiceAPI.Services;
 using System.Security.Claims;
@@ -25,23 +26,27 @@ namespace ProfilesServiceAPI.Endpoints
 
             }).RequireAuthorization("user");
 
-            app.MapPost("/api/profiles/change", async (HttpContext context,
+            app.MapPut("/api/profiles/change", async (HttpContext context,
                 [FromServices] UsersService usersService,
                 [FromBody] RegisterRequest request) =>
             {
                 await Task.CompletedTask;
             }).RequireAuthorization("user");
 
-            app.MapPost("/api/profiles/password", async (HttpContext context,
+            app.MapPut("/api/profiles/password", async (HttpContext context,
                 [FromServices] LoginUsersService loginService,
-                string newPassword) =>
+                [FromBody] string newPassword,
+                CancellationToken token) =>
             {
                 try
                 {
                     var idStr = context.User.FindFirst(ClaimTypes.Sid)?.Value;
                     if (idStr == string.Empty) return Results.BadRequest("error");
                     Guid id = Guid.Parse(idStr!);
-
+                    string email = await loginService.GetEmailAsync(id, token);
+                    var userLogin = LoginUsers.Create(id, email, newPassword);
+                    if (!userLogin.IsSuccess) return Results.BadRequest(userLogin.Error);
+                    await loginService.UpdatePasswordAsync(userLogin.Value, token);
                     return Results.Ok();
                 }
                 catch
@@ -50,7 +55,7 @@ namespace ProfilesServiceAPI.Endpoints
                 }
             }).RequireAuthorization("user");
 
-            app.MapPost("/api/profiles/interests/add", () =>
+            app.MapPut("/api/profiles/interests/add", () =>
             {
 
             }).RequireAuthorization("user");
