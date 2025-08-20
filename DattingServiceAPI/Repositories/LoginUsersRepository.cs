@@ -74,5 +74,13 @@ namespace ProfilesServiceAPI.Repositories
                 a.SetProperty(a => a.Password, user.Password), token);
         }
 
+        public async Task<string> GetEmailAsync(Guid id,  CancellationToken token)
+        {
+            var result = await _context.LoginUsers
+                .AsNoTracking()
+                .FirstOrDefaultAsync(a => a.Id  == id, token);
+            if (result is null) return string.Empty;
+            return result.Email;
+        }
     }
 }
