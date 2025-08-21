@@ -26,8 +26,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess.Photo.MongoDB", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess.Decks.Redis", "DataAccess.Decks.Redis\DataAccess.Decks.Redis.csproj", "{73D6C9DF-599E-4EDD-9D47-DDAAFA1F8AC6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DattingService.Infrastructure", "DattingService.Infrastructure\DattingService.Infrastructure.csproj", "{68A4FAA3-D8E2-4F4C-961A-8042781D1953}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,10 +64,6 @@ Global
 		{73D6C9DF-599E-4EDD-9D47-DDAAFA1F8AC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73D6C9DF-599E-4EDD-9D47-DDAAFA1F8AC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{73D6C9DF-599E-4EDD-9D47-DDAAFA1F8AC6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{68A4FAA3-D8E2-4F4C-961A-8042781D1953}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{68A4FAA3-D8E2-4F4C-961A-8042781D1953}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{68A4FAA3-D8E2-4F4C-961A-8042781D1953}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{68A4FAA3-D8E2-4F4C-961A-8042781D1953}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

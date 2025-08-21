@@ -5,7 +5,7 @@ using DataAccess.Profiles.Postgres;
 using DataAccess.Profiles.Postgres.Abstractions;
 using DataAccess.Profiles.Postgres.Infrastructure;
 using DattingService.Core.Abstractions;
-using DattingService.Infrastructure.Services;
+using DattingService.Core.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -34,6 +34,8 @@ namespace ProfilesServiceAPI
             //builder.Host.UseSerilog();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddScoped<IPasswordHasherService, PasswordHasherService>();
+            builder.Services.AddScoped<IPasswordValidatorService, PasswordValidatorService>();
             builder.Services.AddDbContext<ProfilesDbContext>(options =>
                 options.UseNpgsql("User ID=postgres;Password=123;Host=localhost;Port=5432;Database=db;"));
             builder.Services.AddScoped<IUsersRepository, UsersRepository>();
@@ -57,8 +59,6 @@ namespace ProfilesServiceAPI
             builder.Services.AddScoped<IPhotoRepository, PhotoRepository>();
             builder.Services.AddScoped<IPhotosService, PhotosService>();
             builder.Services.AddScoped<IJwtProviderService, JwtProviderService>();
-            builder.Services.AddScoped<IPasswordHasherService, PasswordHasherService>();
-            builder.Services.AddScoped<IPasswordValidatorService, PasswordValidatorService>();
             builder.WebHost.ConfigureKestrel(options =>
             {
                 options.Limits.MaxRequestBodySize = 10 * 1024 * 1024; 

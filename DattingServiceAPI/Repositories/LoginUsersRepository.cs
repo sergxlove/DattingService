@@ -1,5 +1,6 @@
 ﻿using DataAccess.Profiles.Postgres;
 using DataAccess.Profiles.Postgres.Models;
+using DattingService.Core.Abstractions;
 using DattingService.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using ProfilesServiceAPI.Abstractions;
@@ -11,10 +12,12 @@ namespace ProfilesServiceAPI.Repositories
     public class LoginUsersRepository : ILoginUsersRepository
     {
         private readonly ProfilesDbContext _context;
+        private readonly IPasswordHasherService _passwordHasher;
 
-        public LoginUsersRepository(ProfilesDbContext context)
+        public LoginUsersRepository(ProfilesDbContext context, IPasswordHasherService passwordHasher)
         {
             _context = context;
+            _passwordHasher = passwordHasher;
         }
 
         public async Task<Guid?> VerifyAsync(string email, string password, CancellationToken token)
@@ -23,16 +26,8 @@ namespace ProfilesServiceAPI.Repositories
             if (string.IsNullOrEmpty(password)) return null;
             var result = await _context.LoginUsers.FirstOrDefaultAsync(a => a.Email == email, token);
             if (result == null) return null;
-
-            string passwordHash = string.Empty;
-            byte[] bytes = Encoding.UTF8.GetBytes(password);
-            SHA256 sha256 = SHA256.Create();
-            byte[] hashBytes = sha256.ComputeHash(bytes);
-            passwordHash = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-
-            if (passwordHash != result.Password) return null;
-
-            return result.Id;
+            if (_passwordHasher.Verify(password, result.Password)) return result.Id;
+            return null;
         }
 
         public async Task<Guid> AddAsync(LoginUsers user, CancellationToken token)
