@@ -65,9 +65,21 @@ namespace ProfilesServiceAPI.Endpoints
 
             }).RequireAuthorization("user");
 
-            app.MapGet("/api/profiles", () =>
+            app.MapGet("/api/profiles", async (HttpContext context, 
+                [FromServices] UsersService userService,
+                [FromBody] Guid id,
+                CancellationToken token) =>
             {
-
+                try
+                {
+                    var result = await userService.GetByIdAsync(id, token);
+                    if(result is null) return Results.BadRequest("error");
+                    return Results.Ok(result);
+                }
+                catch
+                {
+                    return Results.BadRequest("error");
+                }
             }).RequireAuthorization("user");
 
             app.MapGet("/api/profiles/photo", () =>

@@ -1,6 +1,6 @@
-﻿using System.Security.Cryptography;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
+using DattingService.Core.Abstractions;
+using DattingService.Core.Services;
 
 namespace DattingService.Core.Models
 {
@@ -15,7 +15,8 @@ namespace DattingService.Core.Models
 
         public string Password { get; private set; } = string.Empty;
 
-        public static Result<LoginUsers> Create(Guid id, string email, string password)
+        public static Result<LoginUsers> Create(Guid id, string email, string password, 
+            IPasswordHasherService passwordHasher)
         {
             if (id == Guid.Empty)
                 return Result<LoginUsers>.Failure("id is empty");
@@ -32,38 +33,56 @@ namespace DattingService.Core.Models
             if (!Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
                 return Result<LoginUsers>.Failure("Invalid email format");
 
-            return Result<LoginUsers>.Success(new LoginUsers(id, email, password));
+            return Result<LoginUsers>.Success(new LoginUsers(id, email, password, passwordHasher));
+        }
+
+        public static Result<LoginUsers> Create(Guid id, string email, string password)
+        {
+            PasswordHasherService passwordHasher = new PasswordHasherService();
+            return Create(id, email, password, passwordHasher);
+        }
+
+        public static Result<LoginUsers> Create(string email, string password,
+            IPasswordHasherService passwordHasher)
+        {
+            return Create(Guid.NewGuid(), email, password, passwordHasher);
         }
 
         public static Result<LoginUsers> Create(string email, string password)
         {
-            return Create(Guid.NewGuid(), email, password);
+            PasswordHasherService passwordHasher = new PasswordHasherService();
+            return Create(email, password, passwordHasher);
         }
 
-        private LoginUsers(Guid id, string email, string password)
+        private LoginUsers(Guid id, string email, string password, IPasswordHasherService passwordHasher)
         {
             Id = id;
             Email = email;
-            Password = HashPassword(password);
+            Password = passwordHasher.Hash(password);
         }
 
-        public Result<LoginUsers> UpadatePassword(string newPassword)
+        public Result<LoginUsers> UpdatePassword(string newPassword,
+            IPasswordHasherService passwordHasher)
         {
             if (string.IsNullOrEmpty(newPassword))
                 return Result<LoginUsers>.Failure("password is empty");
             if (newPassword.Length < MIN_LENGTH_STRING || newPassword.Length > MAX_LENGTH_PASSWORD)
                 return Result<LoginUsers>.Failure($"password need is {MIN_LENGTH_STRING} - " +
                     $"{MAX_LENGTH_PASSWORD} symbols");
-            Password = HashPassword(newPassword);
+            Password = passwordHasher.Hash(newPassword);
             return Result<LoginUsers>.Success(this);
         }
 
-        private string HashPassword(string password)
+        public Result<LoginUsers> UpdatePassword(string newPassword)
         {
-            byte[] bytes = Encoding.UTF8.GetBytes(password);
-            SHA256 sha256 = SHA256.Create();
-            byte[] hashBytes = sha256.ComputeHash(bytes);
-            return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+            PasswordHasherService passwordHasherService = new PasswordHasherService();
+            return UpdatePassword(newPassword, passwordHasherService);
         }
+
+        public static bool Verify(string password, string passwordHash,IPasswordHasherService passwordHasher)
+        {
+            return passwordHasher.Verify(password, passwordHash);
+        }
+
     }
 }
