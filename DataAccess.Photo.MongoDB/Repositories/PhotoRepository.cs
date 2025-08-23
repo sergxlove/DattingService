@@ -13,28 +13,61 @@ namespace DataAccess.Photo.MongoDB.Repositories
             _context = context;
         }
 
-        public async Task<string> CreateAsync(Photos photo)
+
+        public async Task<Stream> ReadAsync(string id)
         {
-            await _context.PhotosCollection.InsertOneAsync(photo);
-            return photo.Id.ToString();
+            var memoryStream = new MemoryStream();
+            await _context._gridFSBucket.DownloadToStreamAsync(ObjectId.Parse(id), memoryStream);
+            memoryStream.Position = 0;
+            return memoryStream;
         }
 
-        public async Task<Photos?> ReadAsync(string id)
+        public async Task<string> AddAsync(Stream stream, string fileName,
+            string contentType, Guid userId)
         {
-            ObjectId photoId = ObjectId.Parse(id);
-            var photo = await _context.PhotosCollection
-                .Find(p => p.Id == photoId)
-                .FirstOrDefaultAsync();
-            return photo;
+            using var session = await _context._client.StartSessionAsync();
+            session.StartTransaction();
+            try
+            {
+                Photos photo = new()
+                {
+                    UserId = userId,
+                    FileName = fileName,
+                    ContentType = contentType,
+                    GridFsFileId = await _context._gridFSBucket.UploadFromStreamAsync(fileName, stream),
+                    UploadDate = DateTime.UtcNow,
+                };
+                await _context.PhotosCollection.InsertOneAsync(session, photo);
+                await session.CommitTransactionAsync();
+                return photo.Id.ToString();
+            }
+            catch
+            {
+                await session.AbortTransactionAsync();
+                return string.Empty;
+            }
         }
 
-        public async Task<long> DeleteAsync(string id)
+        public async Task<bool> DeleteAsync(string id)
         {
-            ObjectId photoId = ObjectId.Parse(id);
-            var result = await _context.PhotosCollection.DeleteOneAsync(a => a.Id == photoId);
-            return result.DeletedCount;
+            using var session = await _context._client.StartSessionAsync();
+            session.StartTransaction();
+            try
+            {
+                var photo = await _context.PhotosCollection
+                    .Find(session, p => p.Id == ObjectId.Parse(id))
+                    .FirstOrDefaultAsync();
+                if (photo is null) return false;
+                await _context._gridFSBucket.DeleteAsync(photo.GridFsFileId);
+                await _context.PhotosCollection.DeleteOneAsync(session, a => a.Id == ObjectId.Parse(id));
+                await session.CommitTransactionAsync();
+                return true;
+            }
+            catch
+            {
+                await session.AbortTransactionAsync();
+                return false;
+            }
         }
-
-
     }
 }
