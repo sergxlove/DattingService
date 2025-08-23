@@ -6,8 +6,8 @@ namespace DataAccess.Photo.MongoDB
 {
     public class PhotoDbContext 
     {
-        private readonly IMongoClient _client;
-        private readonly IGridFSBucket _gridFSBucket;
+        public readonly IMongoClient _client;
+        public readonly IGridFSBucket _gridFSBucket;
         private bool _disposed = false;
 
         public IMongoCollection<Photos> PhotosCollection { get; set; }
