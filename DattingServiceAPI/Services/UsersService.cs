@@ -22,6 +22,11 @@ namespace ProfilesServiceAPI.Services
             return await _repository.AddAsync(user, token);
         }
 
+        public async Task<int> UpdateAsync(Users user, CancellationToken token)
+        {
+            return await _repository.UpdateAsync(user, token);
+        }
+
         public async Task<int> DeleteAsync(Guid id, CancellationToken token)
         {
             return await _repository.DeleteAsync(id, token);

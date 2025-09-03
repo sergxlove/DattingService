@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using DattingService.Core.Requests;
+using Newtonsoft.Json.Linq;
 
 namespace DattingService.Core.Models
 {
@@ -68,9 +69,16 @@ namespace DattingService.Core.Models
             return Create(id, name, age, target, description, city, new JArray() ,isActive, isVerify);
         }
 
+        public static Result<Users> Create(UsersRequest request)
+        {
+            return Create(request.Id, request.Name, request.Age, request.Target, 
+                request.Description, request.City, request.PhotoURL, request.IsActive,
+                request.IsVerify);
+        }
+
         public bool AddUrlPhoto(string url)
         {
-            if(PhotoURL?.Count > 3) return false;
+            if(PhotoURL?.Count > 1) return false;
             PhotoURL?.Add(url);
             return true;
         }
@@ -81,5 +89,7 @@ namespace DattingService.Core.Models
             if (result == false) return false;
             return true;
         }
+
+
     }
 }
