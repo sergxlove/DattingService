@@ -14,16 +14,17 @@ namespace DataAccess.Photo.MongoDB.Repositories
         }
 
 
-        public async Task<Stream> ReadAsync(string id)
+        public async Task<Stream> ReadAsync(string id, CancellationToken token)
         {
             var memoryStream = new MemoryStream();
-            await _context._gridFSBucket.DownloadToStreamAsync(ObjectId.Parse(id), memoryStream);
+            await _context._gridFSBucket.DownloadToStreamAsync(ObjectId.Parse(id), memoryStream,
+                cancellationToken:token);
             memoryStream.Position = 0;
             return memoryStream;
         }
 
         public async Task<string> AddAsync(Stream stream, string fileName,
-            string contentType, Guid userId)
+            string contentType, Guid userId, CancellationToken token)
         {
             using var session = await _context._client.StartSessionAsync();
             session.StartTransaction();
@@ -34,10 +35,12 @@ namespace DataAccess.Photo.MongoDB.Repositories
                     UserId = userId,
                     FileName = fileName,
                     ContentType = contentType,
-                    GridFsFileId = await _context._gridFSBucket.UploadFromStreamAsync(fileName, stream),
+                    GridFsFileId = await _context._gridFSBucket.UploadFromStreamAsync(fileName, stream, 
+                        cancellationToken:token),
                     UploadDate = DateTime.UtcNow,
                 };
-                await _context.PhotosCollection.InsertOneAsync(session, photo);
+                await _context.PhotosCollection.InsertOneAsync(session, photo, 
+                    cancellationToken:token);
                 await session.CommitTransactionAsync();
                 return photo.Id.ToString();
             }
@@ -48,7 +51,7 @@ namespace DataAccess.Photo.MongoDB.Repositories
             }
         }
 
-        public async Task<bool> DeleteAsync(string id)
+        public async Task<bool> DeleteAsync(string id, CancellationToken token)
         {
             using var session = await _context._client.StartSessionAsync();
             session.StartTransaction();
@@ -56,10 +59,11 @@ namespace DataAccess.Photo.MongoDB.Repositories
             {
                 var photo = await _context.PhotosCollection
                     .Find(session, p => p.Id == ObjectId.Parse(id))
-                    .FirstOrDefaultAsync();
+                    .FirstOrDefaultAsync(token);
                 if (photo is null) return false;
-                await _context._gridFSBucket.DeleteAsync(photo.GridFsFileId);
-                await _context.PhotosCollection.DeleteOneAsync(session, a => a.Id == ObjectId.Parse(id));
+                await _context._gridFSBucket.DeleteAsync(photo.GridFsFileId, token);
+                await _context.PhotosCollection.DeleteOneAsync(session, a => a.Id == ObjectId.Parse(id),
+                    cancellationToken:token);
                 await session.CommitTransactionAsync();
                 return true;
             }

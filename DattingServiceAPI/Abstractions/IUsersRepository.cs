@@ -10,5 +10,6 @@ namespace ProfilesServiceAPI.Abstractions
         Task<int> ActiveAsync(Guid id, CancellationToken token);
         Task<int> VerifyAsync(Guid id, CancellationToken token);
         Task<int> InactiveAsync(Guid id, CancellationToken token);
+        Task<int> UpdateAsync(Users user, CancellationToken token);
     }
 }

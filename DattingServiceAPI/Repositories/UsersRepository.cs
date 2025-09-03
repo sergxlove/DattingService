@@ -46,6 +46,20 @@ namespace ProfilesServiceAPI.Repositories
             return userEntity.Id;
         }
 
+        public async Task<int> UpdateAsync(Users user, CancellationToken token)
+        {
+            return await _context.Users.
+                AsNoTracking()
+                .Where(a => a.Id == user.Id)
+                .ExecuteUpdateAsync(a =>
+                a.SetProperty(a => a.Name, user.Name)
+                .SetProperty(a => a.Age, user.Age)
+                .SetProperty(a => a.Target, user.Target)
+                .SetProperty(a => a.Description, user.Description)
+                .SetProperty(a => a.City, user.City)
+                .SetProperty(a => a.PhotoURL, user.PhotoURL), token);
+        }
+
         public async Task<int> DeleteAsync(Guid id, CancellationToken token)
         {
             return await _context.Users

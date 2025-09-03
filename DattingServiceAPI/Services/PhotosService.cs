@@ -11,17 +11,17 @@ namespace ProfilesServiceAPI.Services
         {
             _repository = repository;
         }
-        public async Task<string> CreateAsync(Photos photo)
+        public async Task<string> AddAsync(Stream stream, string fileName, string contentType, Guid userId, CancellationToken token)
         {
-            return await _repository.CreateAsync(photo);
+            return await _repository.AddAsync(stream, fileName, contentType, userId, token);
         }
-        public async Task<long> DeleteAsync(string id)
+        public async Task<bool> DeleteAsync(string id, CancellationToken token)
         {
-            return await _repository.DeleteAsync(id);
+            return await _repository.DeleteAsync(id, token);
         }
-        public async Task<Photos?> ReadAsync(string id)
+        public async Task<Stream> ReadAsync(string id, CancellationToken token)
         {
-            return await _repository.ReadAsync(id);
+            return await _repository.ReadAsync(id, token);
         }
     }
 }
