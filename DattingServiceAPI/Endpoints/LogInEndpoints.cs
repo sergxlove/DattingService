@@ -111,6 +111,10 @@ namespace ProfilesServiceAPI.Endpoints
 
             app.MapDelete("/api/users/delete", (HttpContext context) =>
             {
+                var idStr = context.User.FindFirst(ClaimTypes.Sid)?.Value;
+                if (idStr == string.Empty) return Results.BadRequest("error");
+                Guid id = Guid.Parse(idStr!);
+
                 return Results.Ok();
             }).RequireAuthorization("OnlyForAuthUser");
 
