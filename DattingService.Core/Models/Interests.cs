@@ -13,20 +13,24 @@ namespace DattingService.Core.Models
         {
             [Description("Sport")]
             Sport = 1,
+            [Description("Travel")]
+            Travel = 2
         }
 
-        public bool AddInerest(Interest interest)
+        public Interests(Guid id, JArray interests)
         {
-            if (SelectInterests.Count > 11) return false;
-            SelectInterests.Add(interest);
+            Id = id;
+            SelectInterests = interests;
+        }
+
+        public bool UpdateInterest(List<Interest> interests)
+        {
+            SelectInterests.Clear();
+            foreach (Interest item in interests)
+            {
+                SelectInterests.Add(item);
+            }
             return true;
-        }
-
-        public bool RemoveInterest(Interest interest)
-        {
-            if(SelectInterests.Count > 11) return false;
-            var result = SelectInterests.Remove(GetSkinString(interest));
-            return result;
         }
 
         public static string GetSkinString<T>(T value)
@@ -35,5 +39,14 @@ namespace DattingService.Core.Models
             DescriptionAttribute attribute = field?.GetCustomAttribute<DescriptionAttribute>()!;
             return attribute?.Description ?? value.ToString()!;
         }
+
+        public static List<string> GetAll()
+        {
+            return Enum.GetValues(typeof(Interest))
+                .Cast<Interest>()
+                .Select(x => GetSkinString(x))
+                .ToList();
+        }
+
     }
 }

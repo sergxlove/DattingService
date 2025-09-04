@@ -1,9 +1,9 @@
 ﻿using DattingService.Core.Models;
 using DattingService.Core.Requests;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using ProfilesServiceAPI.Abstractions;
 using ProfilesServiceAPI.Requests;
-using ProfilesServiceAPI.Services;
 using System.Security.Claims;
 
 namespace ProfilesServiceAPI.Endpoints
@@ -42,7 +42,7 @@ namespace ProfilesServiceAPI.Endpoints
                 {
                     return Results.BadRequest("error");
                 }
-            }).RequireAuthorization("user");
+            }).RequireAuthorization("OnlyForAuthUser");
 
             app.MapPost("/api/profiles/photo/delete", async (HttpContext context,
                 [FromServices] IPhotosService photosService,
@@ -64,7 +64,7 @@ namespace ProfilesServiceAPI.Endpoints
                 }
                 return Results.BadRequest("image dont delete");
 
-            }).RequireAuthorization("user");
+            }).RequireAuthorization("OnlyForAuthUser");
 
             app.MapPut("/api/profiles/change", async (HttpContext context,
                 [FromServices] IUsersService usersService,
@@ -106,10 +106,10 @@ namespace ProfilesServiceAPI.Endpoints
                     return Results.BadRequest(newUser.Error);
                 }
 
-            }).RequireAuthorization("user");
+            }).RequireAuthorization("OnlyForAuthUser");
 
             app.MapPut("/api/profiles/password", async (HttpContext context,
-                [FromServices] LoginUsersService loginService,
+                [FromServices] ILoginUsersService loginService,
                 [FromBody] string newPassword,
                 CancellationToken token) =>
             {
@@ -128,27 +128,37 @@ namespace ProfilesServiceAPI.Endpoints
                 {
                     return Results.BadRequest("error");
                 }
-            }).RequireAuthorization("user");
+            }).RequireAuthorization("OnlyForAuthUser");
 
-            app.MapPut("/api/profiles/interests/add", () =>
+            app.MapPut("/api/profiles/interests/update", async (HttpContext context,
+                [FromBody] InterestsRequest request,
+                [FromServices] IUsersService usersService,
+                [FromServices] IInterestsService interestService,
+                CancellationToken token) =>
             {
+                var idStr = context.User.FindFirst(ClaimTypes.Sid)?.Value;
+                if (idStr == string.Empty) return Results.BadRequest("error");
+                Guid id = Guid.Parse(idStr!);
+                var result = await interestService.CheckAsync(id, token);
+                if (!result) return Results.NotFound("user not found");
+                Interests interests = new Interests(id, JArray.FromObject(request.InterestsUser));
+                await interestService.UpdateAsync(interests, token);
+                return Results.Ok();
+            }).RequireAuthorization("OnlyForAuthUser");
 
-            }).RequireAuthorization("user");
-
-            app.MapDelete("/api/profiles/interests/delete", () =>
+            app.MapGet("/api/profiles/interests", async (HttpContext context,
+                [FromBody] Guid id,
+                [FromServices] IInterestsService interestService,
+                CancellationToken token) =>
             {
-
-            }).RequireAuthorization("user");
-
-            app.MapGet("/api/profiles/interests", () =>
-            {
-
-            }).RequireAuthorization("user");
+                var result = await interestService.GetAsync(id, token);
+                return Results.Ok(result);
+            }).RequireAuthorization("OnlyForAuthUser");
 
             app.MapGet("/api/profiles/interests/all", () =>
             {
-
-            }).RequireAuthorization("user");
+                return Results.Ok(Interests.GetAll());
+            }).RequireAuthorization("OnlyForAuthUser");
 
             app.MapGet("/api/profiles", async (HttpContext context, 
                 [FromServices] IUsersService userService,
@@ -165,7 +175,7 @@ namespace ProfilesServiceAPI.Endpoints
                 {
                     return Results.BadRequest("error");
                 }
-            }).RequireAuthorization("user");
+            }).RequireAuthorization("OnlyForAuthUser");
 
             app.MapGet("/api/profiles/photo", async (HttpContext context,
                 [FromServices] IPhotosService photosService,
@@ -174,7 +184,7 @@ namespace ProfilesServiceAPI.Endpoints
             {
                 var imageStream = await photosService.ReadAsync(id, token);
                 return Results.File(imageStream);
-            }).RequireAuthorization("user");
+            }).RequireAuthorization("OnlyForAuthUser");
 
             return app;
         }
