@@ -26,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess.Photo.MongoDB", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess.Decks.Redis", "DataAccess.Decks.Redis\DataAccess.Decks.Redis.csproj", "{73D6C9DF-599E-4EDD-9D47-DDAAFA1F8AC6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess.Photo.S3Minio", "DataAccess.Photo.S3Minio\DataAccess.Photo.S3Minio.csproj", "{60CC1284-D7E5-4116-825C-61D1C5D7DD85}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -64,6 +66,10 @@ Global
 		{73D6C9DF-599E-4EDD-9D47-DDAAFA1F8AC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73D6C9DF-599E-4EDD-9D47-DDAAFA1F8AC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{73D6C9DF-599E-4EDD-9D47-DDAAFA1F8AC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60CC1284-D7E5-4116-825C-61D1C5D7DD85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60CC1284-D7E5-4116-825C-61D1C5D7DD85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60CC1284-D7E5-4116-825C-61D1C5D7DD85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60CC1284-D7E5-4116-825C-61D1C5D7DD85}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
