@@ -1,5 +1,4 @@
-﻿using DataAccess.Photo.MongoDB.Abstractions;
-using DataAccess.Photo.MongoDB.Models;
+﻿using DataAccess.Photo.S3Minio.Abstractions;
 using ProfilesServiceAPI.Abstractions;
 
 namespace ProfilesServiceAPI.Services
@@ -11,17 +10,34 @@ namespace ProfilesServiceAPI.Services
         {
             _repository = repository;
         }
-        public async Task<string> AddAsync(Stream stream, string fileName, string contentType, Guid userId, CancellationToken token)
+        
+        public async Task CreateBucketIfNotExistsAsync(string bucketName, CancellationToken token)
         {
-            return await _repository.AddAsync(stream, fileName, contentType, userId, token);
+            await _repository.CreateBucketIfNotExistsAsync(bucketName, token);
         }
-        public async Task<bool> DeleteAsync(string id, CancellationToken token)
+
+        public async Task<string> UploadFileAsync(string bucketName, string fileName, 
+            CancellationToken token)
         {
-            return await _repository.DeleteAsync(id, token);
+            return await _repository.UploadFileAsync(bucketName, fileName, token);
         }
-        public async Task<Stream> ReadAsync(string id, CancellationToken token)
+
+        public async Task<Stream?> DownloadFromNameAsync(string fileName, string bucketName,
+            CancellationToken token)
         {
-            return await _repository.ReadAsync(id, token);
+            return await _repository.DownloadFromNameAsync(fileName, bucketName, token);
+        }
+
+        public async Task<bool> DeleteAsync(string bucketName, string fileName, 
+            CancellationToken token)
+        {
+            return await _repository.DeleteAsync(bucketName, fileName, token);
+        }
+
+        public async Task<bool> ExistsObjectAsync(string bucketName, string fileName, 
+            CancellationToken token)
+        {
+            return await _repository.ExistsObjectAsync(bucketName, fileName, token);
         }
     }
 }

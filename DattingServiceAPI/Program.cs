@@ -1,6 +1,5 @@
-using DataAccess.Photo.MongoDB;
-using DataAccess.Photo.MongoDB.Abstractions;
-using DataAccess.Photo.MongoDB.Repositories;
+using DataAccess.Photo.S3Minio.Abstractions;
+using DataAccess.Photo.S3Minio.Repositories;
 using DataAccess.Profiles.Postgres;
 using DataAccess.Profiles.Postgres.Abstractions;
 using DataAccess.Profiles.Postgres.Infrastructure;
@@ -9,7 +8,6 @@ using DattingService.Core.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using MongoDB.Driver;
 using ProfilesServiceAPI.Abstractions;
 using ProfilesServiceAPI.Extensions;
 using ProfilesServiceAPI.Repositories;
@@ -48,13 +46,6 @@ namespace ProfilesServiceAPI
             builder.Services.AddScoped<ITempLoginUsersService, TempLoginUsersService>();
             builder.Services.AddScoped<ITransactionsWork, TransactionsWork>();
             builder.Services.AddScoped<IRegistrUserService, RegistrUserService>();
-            builder.Services.AddSingleton<IMongoClient>(_ =>
-                new MongoClient("mongodb://localhost:27017"));
-            builder.Services.AddScoped<PhotoDbContext>(provider =>
-            {
-                var client = provider.GetRequiredService<IMongoClient>();
-                return new PhotoDbContext(client, "photo");
-            });
             builder.Services.AddScoped<IConvertService, ConvertService>();
             builder.Services.AddScoped<IPhotoRepository, PhotoRepository>();
             builder.Services.AddScoped<IPhotosService, PhotosService>();

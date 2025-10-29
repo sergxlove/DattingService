@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DataAccess.Photo.MongoDB\DataAccess.Photo.MongoDB.csproj" />
+    <ProjectReference Include="..\DataAccess.Photo.S3Minio\DataAccess.Photo.S3Minio.csproj" />
     <ProjectReference Include="..\DataAccess.Profiles.Postgres\DataAccess.Profiles.Postgres.csproj" />
   </ItemGroup>
 

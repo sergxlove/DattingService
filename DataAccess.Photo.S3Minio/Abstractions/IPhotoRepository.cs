@@ -2,10 +2,10 @@
 {
     public interface IPhotoRepository
     {
-        Task CreateBucketIfNotExistsAsync(string bucketName);
-        Task<bool> DeleteAsync(string bucketName, string fileName);
-        Task<Stream?> DownloadFromNameAsync(string fileName, string bucketName);
-        Task<bool> ExistsObjectAsync(string bucketName, string fileName);
-        Task<string> UploadFileAsync(string bucketName, string fileName);
+        Task CreateBucketIfNotExistsAsync(string bucketName, CancellationToken token);
+        Task<bool> DeleteAsync(string bucketName, string fileName, CancellationToken token);
+        Task<Stream?> DownloadFromNameAsync(string fileName, string bucketName, CancellationToken token);
+        Task<bool> ExistsObjectAsync(string bucketName, string fileName, CancellationToken token);
+        Task<string> UploadFileAsync(string bucketName, string fileName, CancellationToken token);
     }
 }
