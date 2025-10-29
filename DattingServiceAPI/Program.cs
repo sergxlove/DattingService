@@ -1,3 +1,4 @@
+using DataAccess.Photo.S3Minio;
 using DataAccess.Photo.S3Minio.Abstractions;
 using DataAccess.Photo.S3Minio.Repositories;
 using DataAccess.Profiles.Postgres;
@@ -5,8 +6,11 @@ using DataAccess.Profiles.Postgres.Abstractions;
 using DataAccess.Profiles.Postgres.Infrastructure;
 using DattingService.Core.Abstractions;
 using DattingService.Core.Services;
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using ProfilesServiceAPI.Abstractions;
 using ProfilesServiceAPI.Extensions;
@@ -47,6 +51,7 @@ namespace ProfilesServiceAPI
             builder.Services.AddScoped<ITransactionsWork, TransactionsWork>();
             builder.Services.AddScoped<IRegistrUserService, RegistrUserService>();
             builder.Services.AddScoped<IConvertService, ConvertService>();
+            builder.Services.AddSingleton<PhotoMinioContext>();
             builder.Services.AddScoped<IPhotoRepository, PhotoRepository>();
             builder.Services.AddScoped<IPhotosService, PhotosService>();
             builder.Services.AddScoped<IJwtProviderService, JwtProviderService>();
@@ -92,6 +97,12 @@ namespace ProfilesServiceAPI
                 });
             });
 
+            builder.Services.AddHealthChecks()
+                .AddCheck("self", () =>
+                {
+                    return HealthCheckResult.Healthy("ok");
+                });
+
             var app = builder.Build();
             app.UseAuthentication();
             app.UseAuthorization();
@@ -99,6 +110,10 @@ namespace ProfilesServiceAPI
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
+            app.MapHealthChecks("/health", new HealthCheckOptions
+            {
+                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
             });
 
             app.MapAllEndpoints();

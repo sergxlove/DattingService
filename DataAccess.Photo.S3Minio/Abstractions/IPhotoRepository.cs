@@ -6,6 +6,6 @@
         Task<bool> DeleteAsync(string bucketName, string fileName, CancellationToken token);
         Task<Stream?> DownloadFromNameAsync(string fileName, string bucketName, CancellationToken token);
         Task<bool> ExistsObjectAsync(string bucketName, string fileName, CancellationToken token);
-        Task<string> UploadFileAsync(string bucketName, string fileName, CancellationToken token);
+        Task<string> UploadFileAsync(string bucketName, string fileName, Stream fileStream, CancellationToken token);
     }
 }

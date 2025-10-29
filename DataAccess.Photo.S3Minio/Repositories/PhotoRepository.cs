@@ -27,15 +27,21 @@ namespace DataAccess.Photo.S3Minio.Repositories
             }
         }
 
-        public async Task<string> UploadFileAsync(string bucketName, string fileName,
-            CancellationToken token)
+        public async Task<string> UploadFileAsync(string bucketName, string fileName, 
+            Stream fileStream, CancellationToken token)
         {
             try
             {
                 await CreateBucketIfNotExistsAsync(bucketName, token);
                 string uniqueName = GenerateUniqueNameFile(fileName, "photo");
                 string contentType = GetContentType(uniqueName);
-                using Stream fileStream = File.OpenRead(fileName);
+                if(!fileStream.CanSeek)
+                {
+                    var memoryStream = new MemoryStream();
+                    await fileStream.CopyToAsync(memoryStream, token);
+                    memoryStream.Position = 0;
+                    fileStream = memoryStream;
+                }
                 var putObjectArgs = new PutObjectArgs()
                     .WithBucket(bucketName)
                     .WithObject(uniqueName)
