@@ -16,22 +16,23 @@ namespace DataAccess.Photo.S3Minio.Repositories
             _httpClient.Timeout = TimeSpan.FromMinutes(30);
         }
 
-        public async Task CreateBucketIfNotExistsAsync(string bucketName)
+        public async Task CreateBucketIfNotExistsAsync(string bucketName, CancellationToken token)
         {
             var existsArgs = new BucketExistsArgs().WithBucket(bucketName);
-            bool isFound = await _context._minioClient.BucketExistsAsync(existsArgs);
+            bool isFound = await _context._minioClient.BucketExistsAsync(existsArgs, token);
             if (!isFound)
             {
                 var makeArgs = new MakeBucketArgs().WithBucket(bucketName);
-                await _context._minioClient.MakeBucketAsync(makeArgs);
+                await _context._minioClient.MakeBucketAsync(makeArgs, token);
             }
         }
 
-        public async Task<string> UploadFileAsync(string bucketName, string fileName)
+        public async Task<string> UploadFileAsync(string bucketName, string fileName,
+            CancellationToken token)
         {
             try
             {
-                await CreateBucketIfNotExistsAsync(bucketName);
+                await CreateBucketIfNotExistsAsync(bucketName, token);
                 string uniqueName = GenerateUniqueNameFile(fileName, "photo");
                 string contentType = GetContentType(uniqueName);
                 using Stream fileStream = File.OpenRead(fileName);
@@ -41,7 +42,7 @@ namespace DataAccess.Photo.S3Minio.Repositories
                     .WithStreamData(fileStream)
                     .WithObjectSize(fileStream.Length)
                     .WithContentType(contentType);
-                await _context._minioClient.PutObjectAsync(putObjectArgs);
+                await _context._minioClient.PutObjectAsync(putObjectArgs, token);
                 return uniqueName;
             }
             catch
@@ -50,7 +51,8 @@ namespace DataAccess.Photo.S3Minio.Repositories
             }
         }
 
-        public async Task<Stream?> DownloadFromNameAsync(string fileName, string bucketName)
+        public async Task<Stream?> DownloadFromNameAsync(string fileName, string bucketName, 
+            CancellationToken token)
         {
             var memoryStream = new MemoryStream();
             try
@@ -63,7 +65,7 @@ namespace DataAccess.Photo.S3Minio.Repositories
                         await stream.CopyToAsync(memoryStream);
                         memoryStream.Position = 0;
                     });
-                await _context._minioClient.GetObjectAsync(getObjectArgs);
+                await _context._minioClient.GetObjectAsync(getObjectArgs, token);
                 return memoryStream;
             }
             catch
@@ -73,14 +75,15 @@ namespace DataAccess.Photo.S3Minio.Repositories
             }
         }
 
-        public async Task<bool> DeleteAsync(string bucketName, string fileName)
+        public async Task<bool> DeleteAsync(string bucketName, string fileName,
+            CancellationToken token)
         {
             try
             {
                 var args = new RemoveObjectArgs()
                     .WithBucket(bucketName)
                     .WithObject(fileName);
-                await _context._minioClient.RemoveObjectAsync(args);
+                await _context._minioClient.RemoveObjectAsync(args, token);
                 return true;
             }
             catch
@@ -89,14 +92,15 @@ namespace DataAccess.Photo.S3Minio.Repositories
             }
         }
 
-        public async Task<bool> ExistsObjectAsync(string bucketName, string fileName)
+        public async Task<bool> ExistsObjectAsync(string bucketName, string fileName, 
+            CancellationToken token)
         {
             try
             {
                 var args = new StatObjectArgs()
                     .WithBucket(bucketName)
                     .WithObject(fileName);
-                await _context._minioClient.StatObjectAsync(args);
+                await _context._minioClient.StatObjectAsync(args, token);
                 return true;
             }
             catch
