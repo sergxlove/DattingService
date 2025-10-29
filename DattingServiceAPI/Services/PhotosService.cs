@@ -16,10 +16,10 @@ namespace ProfilesServiceAPI.Services
             await _repository.CreateBucketIfNotExistsAsync(bucketName, token);
         }
 
-        public async Task<string> UploadFileAsync(string bucketName, string fileName, 
-            CancellationToken token)
+        public async Task<string> UploadFileAsync(string bucketName, string fileName,
+            Stream fileStream, CancellationToken token)
         {
-            return await _repository.UploadFileAsync(bucketName, fileName, token);
+            return await _repository.UploadFileAsync(bucketName, fileName, fileStream ,token);
         }
 
         public async Task<Stream?> DownloadFromNameAsync(string fileName, string bucketName,

@@ -28,8 +28,8 @@ namespace ProfilesServiceAPI.Endpoints
                     if (idStr == string.Empty) return Results.BadRequest("error");
                     Guid id = Guid.Parse(idStr!);
                     using var stream = file.OpenReadStream();
-                    var photoId = await photosService.AddAsync(stream, file.FileName,
-                        file.ContentType, id, token);
+                    var photoId = await photosService.UploadFileAsync("photopr", file.FileName,
+                        stream, token);
                     if (photoId == string.Empty) return Results.InternalServerError();
                     var user = await usersService.GetByIdAsync(id, token);
                     if (user is null) return Results.NotFound("not found user");
@@ -55,7 +55,7 @@ namespace ProfilesServiceAPI.Endpoints
                 var user = await usersService.GetByIdAsync(id, token);
                 if (user is null) return Results.NotFound("user is not found");
                 if(user.PhotoURL is null) return Results.NotFound("this user no image");
-                var result = await photosService.DeleteAsync(user.PhotoURL[0].ToString(), token);
+                var result = await photosService.DeleteAsync("photopr",user.PhotoURL[0].ToString(), token);
                 if (result)
                 {
                     user.RemoveUrlPhoto(user.PhotoURL[0].ToString());
@@ -179,11 +179,12 @@ namespace ProfilesServiceAPI.Endpoints
 
             app.MapGet("/api/profiles/photo", async (HttpContext context,
                 [FromServices] IPhotosService photosService,
-                [FromBody] string id,
+                [FromBody] PhotoGetRequest request,
                 CancellationToken token) =>
             {
-                var imageStream = await photosService.ReadAsync(id, token);
-                return Results.File(imageStream);
+                var stream = await photosService.DownloadFromNameAsync(request.PhotoName, "photopr", token);
+                if (stream is null) return Results.BadRequest();
+                return Results.Stream(stream);
             }).RequireAuthorization("OnlyForAuthUser");
 
             return app;
