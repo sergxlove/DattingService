@@ -8,7 +8,7 @@ namespace HealthDashboard
            
             builder.Services.AddHealthChecksUI(setup =>
             {
-                setup.AddHealthCheckEndpoint("ProfilesServiceAPI", "http://localhost:7006/health");
+                setup.AddHealthCheckEndpoint("ProfilesServiceAPI", "http://localhost:5295/health");
             }).AddInMemoryStorage();
             var app = builder.Build();
             app.MapHealthChecksUI();

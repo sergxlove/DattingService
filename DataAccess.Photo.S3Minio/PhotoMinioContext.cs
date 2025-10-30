@@ -11,7 +11,7 @@ namespace DataAccess.Photo.S3Minio
 
         public PhotoMinioContext()
         {
-            _endpoint = "45.134.12.203:9000";
+            _endpoint = "localhost:9000";
             _accessKey = "TLjPyZnRNC0N3nsO";
             _secretKey = "E8cnUDQ6fDDQeAQY";
             _minioClient = new MinioClient()
