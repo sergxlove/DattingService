@@ -4,8 +4,6 @@ using DattingService.Core.Abstractions;
 using DattingService.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using ProfilesServiceAPI.Abstractions;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace ProfilesServiceAPI.Repositories
 {
@@ -24,7 +22,7 @@ namespace ProfilesServiceAPI.Repositories
         {
             if (string.IsNullOrEmpty(email)) return null;
             if (string.IsNullOrEmpty(password)) return null;
-            var result = await _context.LoginUsers.FirstOrDefaultAsync(a => a.Email == email, token);
+            LoginUsersEntity? result = await _context.LoginUsers.FirstOrDefaultAsync(a => a.Email == email, token);
             if (result == null) return null;
             if (_passwordHasher.Verify(password, result.Password)) return result.Id;
             return null;
@@ -32,11 +30,11 @@ namespace ProfilesServiceAPI.Repositories
 
         public async Task<Guid> AddAsync(LoginUsers user, CancellationToken token)
         {
-            LoginUsersEntity userEntity = new LoginUsersEntity()
+            LoginUsersEntity userEntity = new()
             {
                 Id = user.Id,
                 Email = user.Email,
-                Password = user.Password,
+                Password = _passwordHasher.Hash(user.Password)
             };
             await _context.LoginUsers.AddAsync(userEntity, token);
             await _context.SaveChangesAsync(token);
@@ -53,7 +51,7 @@ namespace ProfilesServiceAPI.Repositories
 
         public async Task<bool> CheckAsync(string email, CancellationToken token)
         {
-            var result = await _context.LoginUsers
+            LoginUsersEntity? result = await _context.LoginUsers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.Email == email, token);
             if (result is null) return false;
@@ -71,7 +69,7 @@ namespace ProfilesServiceAPI.Repositories
 
         public async Task<string> GetEmailAsync(Guid id,  CancellationToken token)
         {
-            var result = await _context.LoginUsers
+            LoginUsersEntity? result = await _context.LoginUsers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.Id  == id, token);
             if (result is null) return string.Empty;

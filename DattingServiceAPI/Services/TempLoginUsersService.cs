@@ -25,5 +25,10 @@ namespace ProfilesServiceAPI.Services
         {
             return await _repository.GetAsync(id, token);
         }
+
+        public async Task<bool> CheckAsync(string email, CancellationToken token)
+        {
+            return await _repository.CheckAsync(email, token);
+        }
     }
 }

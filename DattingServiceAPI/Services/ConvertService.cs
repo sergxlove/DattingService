@@ -6,15 +6,15 @@ namespace ProfilesServiceAPI.Services
     {
         public async Task<byte[]> ConvertFormFileToByteArray(IFormFile file)
         {
-            using var memoryStream = new MemoryStream();
+            using MemoryStream memoryStream = new();
             await file.CopyToAsync(memoryStream);
             return memoryStream.ToArray();
         }
 
         public IFormFile ConvertByteArrayToFormFile(byte[] fileBytes, string nameFile)
         {
-            using var memoryStream = new MemoryStream();
-            var stream = new MemoryStream(fileBytes);
+            using MemoryStream memoryStream = new();
+            MemoryStream stream = new(fileBytes);
             return new FormFile(stream, 0, fileBytes.Length, "file", nameFile); ;
         }
     }

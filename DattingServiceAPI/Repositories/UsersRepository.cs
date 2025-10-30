@@ -17,18 +17,18 @@ namespace ProfilesServiceAPI.Repositories
 
         public async Task<Users?> GetByIdAsync(Guid id, CancellationToken token)
         {
-            var result = await _context.Users
+            UsersEntity? result = await _context.Users
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.Id == id, token);
             if (result == null) return null;
-            var user = Users.Create(result.Id, result.Name, result.Age, result.Target,
+            Result<Users> user = Users.Create(result.Id, result.Name, result.Age, result.Target,
                 result.Description, result.City, result.PhotoURL, result.IsActive, result.IsVerify);
             return user.Value;
         }
 
         public async Task<Guid> AddAsync(Users user, CancellationToken token)
         {
-            UsersEntity userEntity = new UsersEntity()
+            UsersEntity userEntity = new()
             {
                 Id = user.Id,
                 Name = user.Name,

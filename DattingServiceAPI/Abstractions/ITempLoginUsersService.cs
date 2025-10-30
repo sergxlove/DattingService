@@ -7,5 +7,6 @@ namespace ProfilesServiceAPI.Abstractions
         Task<Guid> AddAsync(LoginUsers user, CancellationToken token);
         Task<int> DeleteAsync(string email, CancellationToken token);
         Task<LoginUsers?> GetAsync(Guid id, CancellationToken token);
+        Task<bool> CheckAsync(string email, CancellationToken token);
     }
 }
