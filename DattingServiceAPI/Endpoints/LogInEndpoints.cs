@@ -33,12 +33,12 @@ namespace ProfilesServiceAPI.Endpoints
                     Guid? idUser = await loginUserService.VerifyAsync(request.Username, request.Password, token);
                     if (idUser == null) return Results.BadRequest("no auth");
 
-                    var claims = new List<Claim>()
+                    List<Claim> claims = new()
                     {
                         new Claim(ClaimTypes.Role, "user"),
                         new Claim(ClaimTypes.Sid, idUser.ToString()!),
                     };
-                    var jwttoken = jwtGenerate!.GenerateToken(new JwtRequest()
+                    string? jwttoken = jwtGenerate!.GenerateToken(new JwtRequest()
                     {
                         Claims = claims
                     });
@@ -55,25 +55,30 @@ namespace ProfilesServiceAPI.Endpoints
                 [FromBody] RegLoginRequest request,
                 [FromServices] IJwtProviderService jwtGenerate,
                 [FromServices] ITempLoginUsersService tempLoginUsersService,
+                [FromServices] ILoginUsersService loginUserService,
                 CancellationToken token) =>
             {
                 try
                 {
                     if (request is null) return Results.BadRequest("request empty");
-                    if(request.Username == string.Empty || request.Password == string.Empty 
+                    if (await loginUserService.CheckAsync(request.Username, token))
+                        return Results.BadRequest("email busy");
+                    if(await tempLoginUsersService.CheckAsync(request.Username, token))
+                        return Results.BadRequest("email busy");
+                    if (request.Username == string.Empty || request.Password == string.Empty 
                         || request.AgainPassword == string.Empty)
                     {
                         return Results.BadRequest("login or password is empty");
                     }
-                    var user = LoginUsers.Create(request.Username, request.Password);
+                    Result<LoginUsers> user = LoginUsers.Create(request.Username, request.Password);
                     if (!user.IsSuccess) return Results.BadRequest(user.Error);
                     await tempLoginUsersService.AddAsync(user.Value, token);
-                    var claims = new List<Claim>()
+                    List<Claim> claims = new()
                     {
                         new Claim(ClaimTypes.Role, "user"),
                         new Claim(ClaimTypes.Sid, user.Value.Id.ToString()!),
                     };
-                    var jwttoken = jwtGenerate!.GenerateToken(new JwtRequest()
+                    string? jwttoken = jwtGenerate!.GenerateToken(new JwtRequest()
                     {
                         Claims = claims
                     });
@@ -93,13 +98,13 @@ namespace ProfilesServiceAPI.Endpoints
             {
                 try
                 {
-                    var idStr = context.User.FindFirst(ClaimTypes.Sid)?.Value;
+                    string? idStr = context.User.FindFirst(ClaimTypes.Sid)?.Value;
                     if (idStr == string.Empty) return Results.BadRequest("error");
                     Guid id = Guid.Parse(idStr!);
-                    var usersResult = Users.Create(id, request.Name, request.Age, request.Target,
+                    Result<Users> usersResult = Users.Create(id, request.Name, request.Age, request.Target,
                         request.Description, request.City, true, true);
                     if (!usersResult.IsSuccess) return Results.BadRequest(usersResult.Error);
-                    var result = await registrService.RegistrationAsync(usersResult.Value, token);
+                    bool result = await registrService.RegistrationAsync(usersResult.Value, token);
                     if(result) return Results.Ok();
                     return Results.BadRequest("no reg");
                 }
@@ -111,7 +116,7 @@ namespace ProfilesServiceAPI.Endpoints
 
             app.MapDelete("/api/users/delete", (HttpContext context) =>
             {
-                var idStr = context.User.FindFirst(ClaimTypes.Sid)?.Value;
+                string? idStr = context.User.FindFirst(ClaimTypes.Sid)?.Value;
                 if (idStr == string.Empty) return Results.BadRequest("error");
                 Guid id = Guid.Parse(idStr!);
 

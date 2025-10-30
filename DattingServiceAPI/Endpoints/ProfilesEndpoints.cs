@@ -24,14 +24,14 @@ namespace ProfilesServiceAPI.Endpoints
                         return Results.BadRequest("No file uploaded");
                     if (file.Length > 10 * 1024 * 1024)
                         return Results.BadRequest("File too large (max 10MB)");
-                    var idStr = context.User.FindFirst(ClaimTypes.Sid)?.Value;
+                    string? idStr = context.User.FindFirst(ClaimTypes.Sid)?.Value;
                     if (idStr == string.Empty) return Results.BadRequest("error");
                     Guid id = Guid.Parse(idStr!);
-                    using var stream = file.OpenReadStream();
-                    var photoId = await photosService.UploadFileAsync("photopr", file.FileName,
+                    using Stream stream = file.OpenReadStream();
+                    string photoId = await photosService.UploadFileAsync("photopr", file.FileName,
                         stream, token);
                     if (photoId == string.Empty) return Results.InternalServerError();
-                    var user = await usersService.GetByIdAsync(id, token);
+                    Users? user = await usersService.GetByIdAsync(id, token);
                     if (user is null) return Results.NotFound("not found user");
                     user.AddUrlPhoto(photoId);
                     int resultUpdate = await usersService.UpdateAsync(user, token);
@@ -49,20 +49,20 @@ namespace ProfilesServiceAPI.Endpoints
                 [FromServices] IUsersService usersService,
                 CancellationToken token) =>
             {
-                var idStr = context.User.FindFirst(ClaimTypes.Sid)?.Value;
+                string? idStr = context.User.FindFirst(ClaimTypes.Sid)?.Value;
                 if (idStr == string.Empty) return Results.BadRequest("error");
                 Guid id = Guid.Parse(idStr!);
-                var user = await usersService.GetByIdAsync(id, token);
+                Users? user = await usersService.GetByIdAsync(id, token);
                 if (user is null) return Results.NotFound("user is not found");
                 if(user.PhotoURL is null) return Results.NotFound("this user no image");
-                var result = await photosService.DeleteAsync("photopr",user.PhotoURL[0].ToString(), token);
+                bool result = await photosService.DeleteAsync("photopr",user.PhotoURL[0].ToString(), token);
                 if (result)
                 {
                     user.RemoveUrlPhoto(user.PhotoURL[0].ToString());
                     await usersService.UpdateAsync(user, token);
                     return Results.Ok();
                 }
-                return Results.BadRequest("image dont delete");
+                return Results.BadRequest("image don't delete");
 
             }).RequireAuthorization("OnlyForAuthUser");
 
@@ -72,10 +72,10 @@ namespace ProfilesServiceAPI.Endpoints
                 CancellationToken token) =>
             {
                 if (request is null) return Results.BadRequest();
-                var idStr = context.User.FindFirst(ClaimTypes.Sid)?.Value;
+                string? idStr = context.User.FindFirst(ClaimTypes.Sid)?.Value;
                 if (idStr == string.Empty) return Results.BadRequest("error");
                 Guid id = Guid.Parse(idStr!);
-                var user = await usersService.GetByIdAsync(id, token);
+                Users? user = await usersService.GetByIdAsync(id, token);
                 if(user is null) return Results.NotFound("user is not found");
                 UsersRequest usersRequest = new()
                 {
@@ -95,7 +95,7 @@ namespace ProfilesServiceAPI.Endpoints
                 if(request.Description == string.Empty) usersRequest.Description = user.Description;
                 else usersRequest.Description = request.Description;
 
-                var newUser = Users.Create(usersRequest);
+                Result<Users> newUser = Users.Create(usersRequest);
                 if(newUser.IsSuccess)
                 {
                     await usersService.UpdateAsync(newUser.Value, token);
@@ -115,11 +115,11 @@ namespace ProfilesServiceAPI.Endpoints
             {
                 try
                 {
-                    var idStr = context.User.FindFirst(ClaimTypes.Sid)?.Value;
+                    string? idStr = context.User.FindFirst(ClaimTypes.Sid)?.Value;
                     if (idStr == string.Empty) return Results.BadRequest("error");
                     Guid id = Guid.Parse(idStr!);
                     string email = await loginService.GetEmailAsync(id, token);
-                    var userLogin = LoginUsers.Create(id, email, newPassword);
+                    Result<LoginUsers> userLogin = LoginUsers.Create(id, email, newPassword);
                     if (!userLogin.IsSuccess) return Results.BadRequest(userLogin.Error);
                     await loginService.UpdatePasswordAsync(userLogin.Value, token);
                     return Results.Ok();
@@ -136,12 +136,12 @@ namespace ProfilesServiceAPI.Endpoints
                 [FromServices] IInterestsService interestService,
                 CancellationToken token) =>
             {
-                var idStr = context.User.FindFirst(ClaimTypes.Sid)?.Value;
+                string? idStr = context.User.FindFirst(ClaimTypes.Sid)?.Value;
                 if (idStr == string.Empty) return Results.BadRequest("error");
                 Guid id = Guid.Parse(idStr!);
-                var result = await interestService.CheckAsync(id, token);
+                bool result = await interestService.CheckAsync(id, token);
                 if (!result) return Results.NotFound("user not found");
-                Interests interests = new Interests(id, JArray.FromObject(request.InterestsUser));
+                Interests interests = new(id, JArray.FromObject(request.InterestsUser));
                 await interestService.UpdateAsync(interests, token);
                 return Results.Ok();
             }).RequireAuthorization("OnlyForAuthUser");
@@ -151,7 +151,7 @@ namespace ProfilesServiceAPI.Endpoints
                 [FromServices] IInterestsService interestService,
                 CancellationToken token) =>
             {
-                var result = await interestService.GetAsync(id, token);
+                JArray result = await interestService.GetAsync(id, token);
                 return Results.Ok(result);
             }).RequireAuthorization("OnlyForAuthUser");
 
@@ -167,7 +167,7 @@ namespace ProfilesServiceAPI.Endpoints
             {
                 try
                 {
-                    var result = await userService.GetByIdAsync(id, token);
+                    Users? result = await userService.GetByIdAsync(id, token);
                     if(result is null) return Results.BadRequest("error");
                     return Results.Ok(result);
                 }
@@ -182,7 +182,7 @@ namespace ProfilesServiceAPI.Endpoints
                 [FromBody] PhotoGetRequest request,
                 CancellationToken token) =>
             {
-                var stream = await photosService.DownloadFromNameAsync(request.PhotoName, "photopr", token);
+                Stream? stream = await photosService.DownloadFromNameAsync(request.PhotoName, "photopr", token);
                 if (stream is null) return Results.BadRequest();
                 return Results.Stream(stream);
             }).RequireAuthorization("OnlyForAuthUser");

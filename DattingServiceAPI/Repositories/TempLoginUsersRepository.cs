@@ -16,7 +16,7 @@ namespace ProfilesServiceAPI.Repositories
 
         public async Task<Guid> AddAsync(LoginUsers user, CancellationToken token)
         {
-            TempLoginUsersEntity userEntity = new TempLoginUsersEntity()
+            TempLoginUsersEntity userEntity = new()
             {
                 Id = user.Id,
                 Email = user.Email,
@@ -37,14 +37,22 @@ namespace ProfilesServiceAPI.Repositories
 
         public async Task<LoginUsers?> GetAsync(Guid id, CancellationToken token)
         {
-            var result = await _context.TempLoginUsers
+            TempLoginUsersEntity? result = await _context.TempLoginUsers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.Id == id, token);
             if (result == null) return null;
-            var user = LoginUsers.Create(result.Id, result.Email, result.Password);
+            Result<LoginUsers> user = LoginUsers.Create(result.Id, result.Email, result.Password);
             if (user.IsSuccess) return user.Value;
             return null;
         }
 
+        public async Task<bool> CheckAsync(string email, CancellationToken token)
+        {
+            TempLoginUsersEntity? result = await _context.TempLoginUsers
+                .AsNoTracking()
+                .FirstOrDefaultAsync(a => a.Email == email, token);
+            if (result == null) return false;
+            return true;
+        }
     }
 }

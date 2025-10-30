@@ -18,7 +18,7 @@ namespace ProfilesServiceAPI.Repositories
 
         public async Task<JArray> GetAsync(Guid id, CancellationToken token)
         {
-            var result = await _context.Interests
+            InterestsEntity? result = await _context.Interests
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.Id == id, token);
             if (result is null) return new JArray();
@@ -56,7 +56,7 @@ namespace ProfilesServiceAPI.Repositories
 
         public async Task<bool> CheckAsync(Guid id, CancellationToken token)
         {
-            var result = await _context.Interests
+            InterestsEntity? result = await _context.Interests
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.Id == id, token);
             if (result is null) return false;
