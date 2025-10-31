@@ -85,7 +85,7 @@ namespace DattingService.Core.Models
 
         public bool RemoveUrlPhoto(string url)
         {
-            var result = PhotoURL?.Remove(url);
+            bool? result = PhotoURL?.Remove(url);
             if (result == false) return false;
             return true;
         }

@@ -26,7 +26,7 @@ namespace ProfilesServiceAPI
     {
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
             builder.Configuration.AddJsonFile("D:\\projects\\DattingService\\appsetings.json");
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
@@ -103,7 +103,7 @@ namespace ProfilesServiceAPI
                     return HealthCheckResult.Healthy("ok");
                 });
 
-            var app = builder.Build();
+            WebApplication app = builder.Build();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseSwagger();
