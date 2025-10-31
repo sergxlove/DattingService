@@ -18,11 +18,11 @@ namespace DataAccess.Photo.S3Minio.Repositories
 
         public async Task CreateBucketIfNotExistsAsync(string bucketName, CancellationToken token)
         {
-            var existsArgs = new BucketExistsArgs().WithBucket(bucketName);
+            BucketExistsArgs existsArgs = new BucketExistsArgs().WithBucket(bucketName);
             bool isFound = await _context._minioClient.BucketExistsAsync(existsArgs, token);
             if (!isFound)
             {
-                var makeArgs = new MakeBucketArgs().WithBucket(bucketName);
+                MakeBucketArgs makeArgs = new MakeBucketArgs().WithBucket(bucketName);
                 await _context._minioClient.MakeBucketAsync(makeArgs, token);
             }
         }
@@ -37,12 +37,12 @@ namespace DataAccess.Photo.S3Minio.Repositories
                 string contentType = GetContentType(uniqueName);
                 if(!fileStream.CanSeek)
                 {
-                    var memoryStream = new MemoryStream();
+                    MemoryStream memoryStream = new();
                     await fileStream.CopyToAsync(memoryStream, token);
                     memoryStream.Position = 0;
                     fileStream = memoryStream;
                 }
-                var putObjectArgs = new PutObjectArgs()
+                PutObjectArgs putObjectArgs = new PutObjectArgs()
                     .WithBucket(bucketName)
                     .WithObject(uniqueName)
                     .WithStreamData(fileStream)
@@ -60,10 +60,10 @@ namespace DataAccess.Photo.S3Minio.Repositories
         public async Task<Stream?> DownloadFromNameAsync(string fileName, string bucketName, 
             CancellationToken token)
         {
-            var memoryStream = new MemoryStream();
+            MemoryStream memoryStream = new();
             try
             {
-                var getObjectArgs = new GetObjectArgs()
+                GetObjectArgs getObjectArgs = new GetObjectArgs()
                     .WithBucket(bucketName)
                     .WithObject(fileName)
                     .WithCallbackStream(async stream =>
@@ -86,7 +86,7 @@ namespace DataAccess.Photo.S3Minio.Repositories
         {
             try
             {
-                var args = new RemoveObjectArgs()
+                RemoveObjectArgs args = new RemoveObjectArgs()
                     .WithBucket(bucketName)
                     .WithObject(fileName);
                 await _context._minioClient.RemoveObjectAsync(args, token);
@@ -103,7 +103,7 @@ namespace DataAccess.Photo.S3Minio.Repositories
         {
             try
             {
-                var args = new StatObjectArgs()
+                StatObjectArgs args = new StatObjectArgs()
                     .WithBucket(bucketName)
                     .WithObject(fileName);
                 await _context._minioClient.StatObjectAsync(args, token);
