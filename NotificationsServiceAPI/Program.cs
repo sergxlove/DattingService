@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+
 namespace NotificationsServiceAPI
 {
     public class Program
@@ -14,6 +16,12 @@ namespace NotificationsServiceAPI
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
+
+            builder.Services.AddHealthChecks()
+                .AddCheck("self", () =>
+                {
+                    return HealthCheckResult.Healthy("ok");
+                });
 
             app.Run();
         }

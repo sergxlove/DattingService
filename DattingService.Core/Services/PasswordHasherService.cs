@@ -22,7 +22,7 @@ namespace DattingService.Core.Services
 
         public PasswordHasherService()
         {
-            _algorithmType = Core.Abstractions.HashAlgorithm.PBKDF2;
+            _algorithmType = Core.Abstractions.HashAlgorithm.BCrypt;
             _iteration = 1000;
             _saltSize = 16;
             _hashSize = 32;

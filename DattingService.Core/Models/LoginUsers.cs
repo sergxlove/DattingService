@@ -54,11 +54,29 @@ namespace DattingService.Core.Models
             return Create(email, password, passwordHasher);
         }
 
+        public static Result<LoginUsers> Create(Guid id, string email, string password, 
+            bool isNeedHashPassword)
+        {
+            if(isNeedHashPassword)
+            {
+                PasswordHasherService passwordHasher = new PasswordHasherService();
+                return Create(email, password, passwordHasher);
+            }
+            return Result<LoginUsers>.Success(new LoginUsers(id, email, password));
+        }
+
         private LoginUsers(Guid id, string email, string password, IPasswordHasherService passwordHasher)
         {
             Id = id;
             Email = email;
             Password = passwordHasher.Hash(password);
+        }
+
+        private LoginUsers(Guid id, string email, string password)
+        {
+            Id = id;
+            Email = email;
+            Password = password;
         }
 
         public Result<LoginUsers> UpdatePassword(string newPassword,

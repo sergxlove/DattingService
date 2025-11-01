@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+
 namespace SwipesServiceAPI
 {
     public class Program
@@ -15,6 +17,12 @@ namespace SwipesServiceAPI
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
+
+            builder.Services.AddHealthChecks()
+                .AddCheck("self", () =>
+                {
+                    return HealthCheckResult.Healthy("ok");
+                });
 
             app.Run();
         }
