@@ -34,7 +34,7 @@ namespace ProfilesServiceAPI.Repositories
             {
                 Id = user.Id,
                 Email = user.Email,
-                Password = _passwordHasher.Hash(user.Password)
+                Password = user.Password
             };
             await _context.LoginUsers.AddAsync(userEntity, token);
             await _context.SaveChangesAsync(token);

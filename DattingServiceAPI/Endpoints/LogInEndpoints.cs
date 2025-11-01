@@ -43,7 +43,7 @@ namespace ProfilesServiceAPI.Endpoints
                         Claims = claims
                     });
                     context.Response.Cookies.Append("jwt", jwttoken!);
-                    return Results.Ok(token!);
+                    return Results.Ok(jwttoken!);
                 }
                 catch
                 {
