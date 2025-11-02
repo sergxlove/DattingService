@@ -1,4 +1,5 @@
 ﻿using DataAccess.Photo.S3Minio.Abstractions;
+using Minio;
 using Minio.DataModel.Args;
 using System.IO;
 
@@ -6,10 +7,10 @@ namespace DataAccess.Photo.S3Minio.Repositories
 {
     public class PhotoRepository : IPhotoRepository
     {
-        private readonly PhotoMinioContext _context;
+        private readonly IMinioClient _context;
         private readonly HttpClient _httpClient;
 
-        public PhotoRepository(PhotoMinioContext context)
+        public PhotoRepository(IMinioClient context)
         {
             _context = context;
             _httpClient = new HttpClient();
@@ -18,12 +19,19 @@ namespace DataAccess.Photo.S3Minio.Repositories
 
         public async Task CreateBucketIfNotExistsAsync(string bucketName, CancellationToken token)
         {
-            BucketExistsArgs existsArgs = new BucketExistsArgs().WithBucket(bucketName);
-            bool isFound = await _context._minioClient.BucketExistsAsync(existsArgs, token);
-            if (!isFound)
+            try
             {
-                MakeBucketArgs makeArgs = new MakeBucketArgs().WithBucket(bucketName);
-                await _context._minioClient.MakeBucketAsync(makeArgs, token);
+                BucketExistsArgs existsArgs = new BucketExistsArgs().WithBucket(bucketName);
+                bool isFound = await _context.BucketExistsAsync(existsArgs, token);
+                if (!isFound)
+                {
+                    MakeBucketArgs makeArgs = new MakeBucketArgs().WithBucket(bucketName);
+                    await _context.MakeBucketAsync(makeArgs, token);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
             }
         }
 
@@ -48,7 +56,7 @@ namespace DataAccess.Photo.S3Minio.Repositories
                     .WithStreamData(fileStream)
                     .WithObjectSize(fileStream.Length)
                     .WithContentType(contentType);
-                await _context._minioClient.PutObjectAsync(putObjectArgs, token);
+                await _context.PutObjectAsync(putObjectArgs, token);
                 return uniqueName;
             }
             catch
@@ -71,7 +79,7 @@ namespace DataAccess.Photo.S3Minio.Repositories
                         await stream.CopyToAsync(memoryStream);
                         memoryStream.Position = 0;
                     });
-                await _context._minioClient.GetObjectAsync(getObjectArgs, token);
+                await _context.GetObjectAsync(getObjectArgs, token);
                 return memoryStream;
             }
             catch
@@ -89,7 +97,7 @@ namespace DataAccess.Photo.S3Minio.Repositories
                 RemoveObjectArgs args = new RemoveObjectArgs()
                     .WithBucket(bucketName)
                     .WithObject(fileName);
-                await _context._minioClient.RemoveObjectAsync(args, token);
+                await _context.RemoveObjectAsync(args, token);
                 return true;
             }
             catch
@@ -106,7 +114,7 @@ namespace DataAccess.Photo.S3Minio.Repositories
                 StatObjectArgs args = new StatObjectArgs()
                     .WithBucket(bucketName)
                     .WithObject(fileName);
-                await _context._minioClient.StatObjectAsync(args, token);
+                await _context.StatObjectAsync(args, token);
                 return true;
             }
             catch

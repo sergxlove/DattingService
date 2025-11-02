@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
+using Minio;
 using ProfilesServiceAPI.Abstractions;
 using ProfilesServiceAPI.Extensions;
 using ProfilesServiceAPI.Repositories;
@@ -53,7 +54,12 @@ namespace ProfilesServiceAPI
             builder.Services.AddScoped<ITransactionsWork, TransactionsWork>();
             builder.Services.AddScoped<IRegistrUserService, RegistrUserService>();
             builder.Services.AddScoped<IConvertService, ConvertService>();
-            builder.Services.AddSingleton<PhotoMinioContext>();
+            builder.Services.AddSingleton<IMinioClient>(sp =>
+                new MinioClient()
+                    .WithEndpoint("localhost:9000")
+                    .WithCredentials("TLjPyZnRNC0N3nsO", "E8cnUDQ6fDDQeAQY")
+                    .WithSSL(false)
+                    .Build());
             builder.Services.AddScoped<IPhotoRepository, PhotoRepository>();
             builder.Services.AddScoped<IPhotosService, PhotosService>();
             builder.Services.AddScoped<IJwtProviderService, JwtProviderService>();
@@ -127,6 +133,7 @@ namespace ProfilesServiceAPI
                 {
                     return HealthCheckResult.Healthy("ok");
                 });
+
 
             WebApplication app = builder.Build();
             app.UseAuthentication();

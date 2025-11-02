@@ -1,6 +1,7 @@
 ﻿using DattingService.Core.Models;
 using DattingService.Core.Requests;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Linq;
 using ProfilesServiceAPI.Abstractions;
 using ProfilesServiceAPI.Requests;
@@ -15,7 +16,7 @@ namespace ProfilesServiceAPI.Endpoints
             app.MapPost("/api/profiles/photo/upload", async (HttpContext context,
                 [FromServices] IPhotosService photosService,
                 [FromServices] IUsersService usersService,
-                [FromBody] IFormFile file,
+                [FromForm] IFormFile file,
                 CancellationToken token) =>
             {
                 try
@@ -38,11 +39,38 @@ namespace ProfilesServiceAPI.Endpoints
                     if (resultUpdate == 0) return Results.InternalServerError();
                     return Results.Ok();
                 }
-                catch
+                catch(Exception ex)
                 {
-                    return Results.BadRequest("error");
+                    return Results.BadRequest(ex);
                 }
-            }).RequireAuthorization("OnlyForAuthUser");
+            }).DisableAntiforgery()
+            .RequireAuthorization("OnlyForAuthUser")
+            .WithOpenApi(operation =>
+            {
+                operation.RequestBody = new OpenApiRequestBody
+                {
+                    Content = new Dictionary<string, OpenApiMediaType>
+                    {
+                        ["multipart/form-data"] = new OpenApiMediaType
+                        {
+                            Schema = new OpenApiSchema
+                            {
+                                Type = "object",
+                                Properties = new Dictionary<string, OpenApiSchema>
+                                {
+                                    ["file"] = new OpenApiSchema
+                                    {
+                                        Type = "string",
+                                        Format = "binary"
+                                    }
+                                },
+                                Required = new HashSet<string> { "file" }
+                            }
+                        }
+                    }
+                };
+                return operation;
+            });
 
             app.MapPost("/api/profiles/photo/delete", async (HttpContext context,
                 [FromServices] IPhotosService photosService,
