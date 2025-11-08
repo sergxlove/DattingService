@@ -174,8 +174,7 @@ namespace ProfilesServiceAPI.Endpoints
                 return Results.Ok();
             }).RequireAuthorization("OnlyForAuthUser");
 
-            app.MapGet("/api/profiles/interests", async (HttpContext context,
-                [FromBody] Guid id,
+            app.MapGet("/api/profiles/interests/{id}", async (Guid id, HttpContext context,
                 [FromServices] IInterestsService interestService,
                 CancellationToken token) =>
             {
@@ -188,9 +187,8 @@ namespace ProfilesServiceAPI.Endpoints
                 return Results.Ok(Interests.GetAll());
             }).RequireAuthorization("OnlyForAuthUser");
 
-            app.MapGet("/api/profiles", async (HttpContext context, 
+            app.MapGet("/api/profiles/{id}", async (Guid id, HttpContext context, 
                 [FromServices] IUsersService userService,
-                [FromBody] Guid id,
                 CancellationToken token) =>
             {
                 try
