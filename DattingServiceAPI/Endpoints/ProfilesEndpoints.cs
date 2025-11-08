@@ -205,12 +205,12 @@ namespace ProfilesServiceAPI.Endpoints
                 }
             }).RequireAuthorization("OnlyForAuthUser");
 
-            app.MapGet("/api/profiles/photo", async (HttpContext context,
+            app.MapGet("/api/profiles/photo/{photoName}", async (string photoName,
+                HttpContext context,
                 [FromServices] IPhotosService photosService,
-                [FromBody] PhotoGetRequest request,
                 CancellationToken token) =>
             {
-                Stream? stream = await photosService.DownloadFromNameAsync(request.PhotoName, "photopr", token);
+                Stream? stream = await photosService.DownloadFromNameAsync(photoName, "photopr", token);
                 if (stream is null) return Results.BadRequest();
                 return Results.Stream(stream);
             }).RequireAuthorization("OnlyForAuthUser");

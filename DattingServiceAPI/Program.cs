@@ -134,8 +134,19 @@ namespace ProfilesServiceAPI
                     return HealthCheckResult.Healthy("ok");
                 });
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowLocal", policy =>
+                {
+                    policy.WithOrigins("*") 
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
+
 
             WebApplication app = builder.Build();
+            app.UseCors("AllowLocal");
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseSwagger();
