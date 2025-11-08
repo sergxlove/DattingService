@@ -1,4 +1,3 @@
-using DataAccess.Photo.S3Minio;
 using DataAccess.Photo.S3Minio.Abstractions;
 using DataAccess.Photo.S3Minio.Repositories;
 using DataAccess.Profiles.Postgres;
@@ -30,7 +29,6 @@ namespace ProfilesServiceAPI
         public static void Main(string[] args)
         {
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-            builder.Configuration.AddJsonFile("D:\\projects\\DattingService\\appsetings.json");
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
                 .WriteTo.Console()
@@ -42,7 +40,7 @@ namespace ProfilesServiceAPI
             builder.Services.AddScoped<IPasswordHasherService, PasswordHasherService>();
             builder.Services.AddScoped<IPasswordValidatorService, PasswordValidatorService>();
             builder.Services.AddDbContext<ProfilesDbContext>(options =>
-                options.UseNpgsql("User ID=postgres;Password=123;Host=localhost;Port=5432;Database=db;"));
+                options.UseNpgsql(builder.Configuration["ConnectionStrings:Default"]));
             builder.Services.AddScoped<IUsersRepository, UsersRepository>();
             builder.Services.AddScoped<IUsersService, UsersService>();
             builder.Services.AddScoped<ILoginUsersRepository, LoginUsersRepository>();
@@ -56,8 +54,8 @@ namespace ProfilesServiceAPI
             builder.Services.AddScoped<IConvertService, ConvertService>();
             builder.Services.AddSingleton<IMinioClient>(sp =>
                 new MinioClient()
-                    .WithEndpoint("localhost:9000")
-                    .WithCredentials("TLjPyZnRNC0N3nsO", "E8cnUDQ6fDDQeAQY")
+                    .WithEndpoint(builder.Configuration["MinioS3:Address"])
+                    .WithCredentials(builder.Configuration["MinioS3:User"], builder.Configuration["MinioS3:Password"])
                     .WithSSL(false)
                     .Build());
             builder.Services.AddScoped<IPhotoRepository, PhotoRepository>();
@@ -71,7 +69,7 @@ namespace ProfilesServiceAPI
                 .AddJwtBearer(options =>
                 {
                     IConfigurationSection? jwtSettings = builder.Configuration
-                        .GetSection("ProfilesServiceAPI:JwtSettings");
+                        .GetSection("JwtSettings");
                     options.TokenValidationParameters = new()
                     {
                         ValidateIssuer = false,
