@@ -4,6 +4,6 @@ namespace ProfilesServiceAPI.Requests
 {
     public class InterestsRequest
     {
-        public List<Interests> InterestsUser { get; set; } = [];
+        public List<int> InterestsUser { get; set; } = [];
     }
 }

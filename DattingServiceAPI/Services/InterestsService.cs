@@ -13,7 +13,7 @@ namespace ProfilesServiceAPI.Services
             _repository = repository;
         }
 
-        public async Task<JArray> GetAsync(Guid id, CancellationToken token)
+        public async Task<int[]> GetAsync(Guid id, CancellationToken token)
         {
             return await _repository.GetAsync(id, token);
         }

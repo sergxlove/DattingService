@@ -8,7 +8,7 @@ namespace ProfilesServiceAPI.Abstractions
         Task<Guid> AddAsync(Interests interest, CancellationToken token);
         Task<bool> CheckAsync(Guid id, CancellationToken token);
         Task<int> DeleteAsync(Guid id, CancellationToken token);
-        Task<JArray> GetAsync(Guid id, CancellationToken token);
+        Task<int[]> GetAsync(Guid id, CancellationToken token);
         Task<int> UpdateAsync(Interests interest, CancellationToken token);
     }
 }

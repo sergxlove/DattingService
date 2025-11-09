@@ -16,12 +16,12 @@ namespace ProfilesServiceAPI.Repositories
             _context = context;
         }
 
-        public async Task<JArray> GetAsync(Guid id, CancellationToken token)
+        public async Task<int[]> GetAsync(Guid id, CancellationToken token)
         {
             InterestsEntity? result = await _context.Interests
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.Id == id, token);
-            if (result is null) return new JArray();
+            if (result is null) return Array.Empty<int>();
             return result.SelectInterests;
         }
 

@@ -169,7 +169,7 @@ namespace ProfilesServiceAPI.Endpoints
                 Guid id = Guid.Parse(idStr!);
                 bool result = await interestService.CheckAsync(id, token);
                 if (!result) return Results.NotFound("user not found");
-                Interests interests = new(id, JArray.FromObject(request.InterestsUser));
+                Interests interests = new(id, request.InterestsUser.ToArray());
                 await interestService.UpdateAsync(interests, token);
                 return Results.Ok();
             }).RequireAuthorization("OnlyForAuthUser");
@@ -178,13 +178,13 @@ namespace ProfilesServiceAPI.Endpoints
                 [FromServices] IInterestsService interestService,
                 CancellationToken token) =>
             {
-                JArray result = await interestService.GetAsync(id, token);
+                int[] result = await interestService.GetAsync(id, token);
                 return Results.Ok(result);
             }).RequireAuthorization("OnlyForAuthUser");
 
             app.MapGet("/api/profiles/interests/all", () =>
             {
-                return Results.Ok(Interests.GetAll());
+                return Results.Ok(Interests.GetAll()); 
             }).RequireAuthorization("OnlyForAuthUser");
 
             app.MapGet("/api/profiles/{id}", async (Guid id, HttpContext context, 
