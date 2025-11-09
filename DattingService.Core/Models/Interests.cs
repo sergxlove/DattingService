@@ -8,7 +8,7 @@ namespace DattingService.Core.Models
     {
         public Guid Id { get; private set; }
 
-        public JArray SelectInterests { get; private set; } = new JArray();
+        public int[] SelectInterests { get; private set; }
         public enum Interest
         {
             [Description("Computer games")]
@@ -263,23 +263,19 @@ namespace DattingService.Core.Models
             KPop = 120
         }
 
-        public Interests(Guid id, JArray interests)
+        public Interests(Guid id, int[] interests)
         {
             Id = id;
             SelectInterests = interests;
         }
 
-        public bool UpdateInterest(List<Interest> interests)
+        public bool UpdateInterest(List<int> interests)
         {
-            SelectInterests.Clear();
-            foreach (Interest item in interests)
-            {
-                SelectInterests.Add(item);
-            }
+            SelectInterests = interests.ToArray();
             return true;
         }
 
-        public static string GetSkinString<T>(T value)
+        public static string GetString<T>(T value)
         {
             FieldInfo field = value!.GetType().GetField(value.ToString()!)!;
             DescriptionAttribute attribute = field?.GetCustomAttribute<DescriptionAttribute>()!;
@@ -290,7 +286,7 @@ namespace DattingService.Core.Models
         {
             return Enum.GetValues(typeof(Interest))
                 .Cast<Interest>()
-                .Select(x => GetSkinString(x))
+                .Select(x => GetString(x))
                 .ToList();
         }
 

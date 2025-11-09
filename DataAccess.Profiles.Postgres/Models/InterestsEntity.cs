@@ -6,6 +6,6 @@ namespace DataAccess.Profiles.Postgres.Models
     {
         public Guid Id { get; set; }
 
-        public JArray SelectInterests { get; set; } = new JArray();
+        public int[] SelectInterests { get; set; } = Array.Empty<int>();
     }
 }

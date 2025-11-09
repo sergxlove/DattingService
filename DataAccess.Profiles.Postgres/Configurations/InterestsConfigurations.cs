@@ -13,14 +13,7 @@ namespace DataAccess.Profiles.Postgres.Configurations
             builder.ToTable("iterests");
             builder.HasKey(x => x.Id);
             builder.Property(x => x.SelectInterests)
-                .HasColumnType("jsonb")
-                .HasConversion(
-                    v => v.ToString(),
-                    v => JArray.Parse(v ?? "[]"),
-                    new ValueComparer<JArray>(
-                    (l, r) => JToken.DeepEquals(l, r),
-                    c => c.GetHashCode(),
-                    c => new JArray(c)));
+                .HasColumnType("integer[]");
         }
     }
 }
