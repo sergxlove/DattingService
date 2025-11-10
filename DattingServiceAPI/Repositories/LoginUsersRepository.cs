@@ -49,11 +49,28 @@ namespace ProfilesServiceAPI.Repositories
                 .ExecuteDeleteAsync(token);
         }
 
+        public async Task<int> DeleteAsync(Guid id, CancellationToken token)
+        {
+            return await _context.LoginUsers
+                .AsNoTracking()
+                .Where(a => a.Id == id)
+                .ExecuteDeleteAsync(token);
+        }
+
         public async Task<bool> CheckAsync(string email, CancellationToken token)
         {
             LoginUsersEntity? result = await _context.LoginUsers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.Email == email, token);
+            if (result is null) return false;
+            return true;
+        }
+
+        public async Task<bool> CheckAsync(Guid id, CancellationToken token)
+        {
+            LoginUsersEntity? result = await _context.LoginUsers
+                .AsNoTracking()
+                .FirstOrDefaultAsync(a => a.Id == id, token);
             if (result is null) return false;
             return true;
         }
