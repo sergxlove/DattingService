@@ -28,9 +28,9 @@ namespace DataAccess.Profiles.Postgres.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("SelectInterests")
+                    b.PrimitiveCollection<int[]>("SelectInterests")
                         .IsRequired()
-                        .HasColumnType("jsonb");
+                        .HasColumnType("integer[]");
 
                     b.HasKey("Id");
 
@@ -114,9 +114,9 @@ namespace DataAccess.Profiles.Postgres.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
-                    b.Property<string>("PhotoURL")
+                    b.PrimitiveCollection<string[]>("PhotoURL")
                         .IsRequired()
-                        .HasColumnType("jsonb");
+                        .HasColumnType("text[]");
 
                     b.Property<string>("Target")
                         .IsRequired()

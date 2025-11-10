@@ -16,7 +16,7 @@ namespace DataAccess.Profiles.Postgres.Models
 
         public string City { get; set; } = string.Empty;
 
-        public JArray PhotoURL { get; set; } = new JArray();
+        public string[] PhotoURL { get; set; } = Array.Empty<string>();
 
         public bool IsActive { get; set; }
 

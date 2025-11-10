@@ -23,14 +23,14 @@ namespace DattingService.Core.Models
 
         public string City { get; private set; } = string.Empty;
 
-        public JArray PhotoURL { get; private set; } = new JArray();
+        public string[] PhotoURL { get; private set; }
 
         public bool IsActive { get; private set; }
 
         public bool IsVerify {  get; private set; }
 
         public static Result<Users> Create(Guid id, string name, int age, string target,
-            string description, string city, JArray photoUrl, bool isActive, bool isVerify)
+            string description, string city, string[] photoUrl, bool isActive, bool isVerify)
         {
             if (id == Guid.Empty)
                 return Result<Users>.Failure("id is empty");
@@ -50,7 +50,7 @@ namespace DattingService.Core.Models
         }
 
         private Users(Guid id, string name, int age, string target,string description,
-            string city, JArray photoUrl, bool isActive, bool isVerify)
+            string city, string[] photoUrl, bool isActive, bool isVerify)
         {
             Id = id;
             Name = name;
@@ -66,7 +66,7 @@ namespace DattingService.Core.Models
         public static Result<Users> Create(Guid id, string name, int age, string target, string description, 
             string city, bool isActive, bool isVerify)
         {
-            return Create(id, name, age, target, description, city, new JArray() ,isActive, isVerify);
+            return Create(id, name, age, target, description, city, Array.Empty<string>() ,isActive, isVerify);
         }
 
         public static Result<Users> Create(UsersRequest request)
@@ -78,18 +78,30 @@ namespace DattingService.Core.Models
 
         public bool AddUrlPhoto(string url)
         {
-            if(PhotoURL?.Count > 1) return false;
-            PhotoURL?.Add(url);
+            if(PhotoURL.Length > 1) return false;
+            string[] tempPhotoUrl = PhotoURL;
+            PhotoURL = new string[tempPhotoUrl.Length + 1];
+            for(int i = 0; i < tempPhotoUrl.Length; i++)
+            {
+                PhotoURL[i] = tempPhotoUrl[i];
+            }
+            PhotoURL[PhotoURL.Length-1] = url;
             return true;
         }
 
         public bool RemoveUrlPhoto(string url)
         {
-            bool? result = PhotoURL?.Remove(url);
-            if (result == false) return false;
+            if (PhotoURL.Length <= 1) return false;
+            string[] tempPhotoUrl = PhotoURL;
+            PhotoURL = new string[tempPhotoUrl.Length - 1];
+            int position = 0;
+            for (int i = 0; i < tempPhotoUrl.Length; i++)
+            {
+                if (tempPhotoUrl[i] == url) continue;
+                PhotoURL[position] = tempPhotoUrl[i];
+                position++;
+            }
             return true;
         }
-
-
     }
 }
