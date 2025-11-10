@@ -49,5 +49,27 @@ namespace ProfilesServiceAPI.Services
                 return false;
             }
         }
+
+        public async Task<bool> DeleteUserAsync(Guid id, CancellationToken token)
+        {
+            try
+            {
+                await _transactions.BeginTransactionAsync();
+                if(await _loginUserRep.CheckAsync(id, token)) throw new Exception();
+                int result = await _interestsRep.DeleteAsync(id, token);
+                if(result == 0) throw new Exception();
+                result = await _userRep.DeleteAsync(id, token);
+                if (result == 0) throw new Exception();
+                result = await _loginUserRep.DeleteAsync(id, token);
+                if (result == 0) throw new Exception();
+                await _transactions.CommitAsync();
+                return true;
+            }
+            catch
+            {
+                await _transactions.CommitAsync();
+                return false;
+            }
+        }
     }
 }
