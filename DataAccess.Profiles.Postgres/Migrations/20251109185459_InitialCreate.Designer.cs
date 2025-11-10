@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataAccess.Profiles.Postgres.Migrations
 {
     [DbContext(typeof(ProfilesDbContext))]
-    [Migration("20250816130302_firstBld")]
-    partial class firstBld
+    [Migration("20251109185459_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,9 +31,9 @@ namespace DataAccess.Profiles.Postgres.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("SelectInterests")
+                    b.PrimitiveCollection<int[]>("SelectInterests")
                         .IsRequired()
-                        .HasColumnType("jsonb");
+                        .HasColumnType("integer[]");
 
                     b.HasKey("Id");
 
@@ -117,9 +117,9 @@ namespace DataAccess.Profiles.Postgres.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
-                    b.Property<string>("PhotoURL")
+                    b.PrimitiveCollection<string[]>("PhotoURL")
                         .IsRequired()
-                        .HasColumnType("jsonb");
+                        .HasColumnType("text[]");
 
                     b.Property<string>("Target")
                         .IsRequired()

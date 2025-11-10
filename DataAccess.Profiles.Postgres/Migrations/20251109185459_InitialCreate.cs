@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DataAccess.Profiles.Postgres.Migrations
 {
     /// <inheritdoc />
-    public partial class firstBld : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +16,7 @@ namespace DataAccess.Profiles.Postgres.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    SelectInterests = table.Column<string>(type: "jsonb", nullable: false)
+                    SelectInterests = table.Column<int[]>(type: "integer[]", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -74,7 +74,7 @@ namespace DataAccess.Profiles.Postgres.Migrations
                     Target = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
                     City = table.Column<string>(type: "text", nullable: false),
-                    PhotoURL = table.Column<string>(type: "jsonb", nullable: false),
+                    PhotoURL = table.Column<string[]>(type: "text[]", nullable: false),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     IsVerify = table.Column<bool>(type: "boolean", nullable: false)
                 },

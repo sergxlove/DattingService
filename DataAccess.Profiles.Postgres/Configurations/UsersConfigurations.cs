@@ -26,14 +26,7 @@ namespace DataAccess.Profiles.Postgres.Configurations
             builder.Property(a => a.City)
                 .IsRequired();
             builder.Property(a => a.PhotoURL)
-                .HasColumnType("jsonb")
-                .HasConversion(
-                    v => v.ToString(),
-                    v => JArray.Parse(v ?? "[]"),
-                    new ValueComparer<JArray>(
-                    (l, r) => JToken.DeepEquals(l, r), 
-                    c => c.GetHashCode(),              
-                    c => new JArray(c)));
+                .HasColumnType("text[]");
             builder.Property(a => a.IsActive)
                 .IsRequired();
             builder.Property(a => a.IsVerify)

@@ -10,14 +10,17 @@ namespace ProfilesServiceAPI.Services
         private readonly ILoginUsersRepository _loginUserRep;
         private readonly IUsersRepository _userRep;
         private readonly ITempLoginUsersRepository _tempLoginUserRep;
+        private readonly IInterestsRepository _interestsRep;
         private readonly ITransactionsWork _transactions;
 
         public RegistrUserService(ILoginUsersRepository loginUserRep, IUsersRepository userRep,
-            ITempLoginUsersRepository tempLoginUserRep, ITransactionsWork transactions)
+            ITempLoginUsersRepository tempLoginUserRep, IInterestsRepository interestsRep,
+            ITransactionsWork transactions)
         {
             _loginUserRep = loginUserRep;
             _userRep = userRep;
             _tempLoginUserRep = tempLoginUserRep;
+            _interestsRep = interestsRep;
             _transactions = transactions;
         }
 
@@ -33,6 +36,8 @@ namespace ProfilesServiceAPI.Services
                 Guid result = await _loginUserRep.AddAsync(loginUser, token);
                 if (result != user.Id) throw new Exception();
                 result = await _userRep.AddAsync(user, token);
+                if (result != user.Id) throw new Exception();
+                result = await _interestsRep.AddAsync(new Interests(user.Id, Array.Empty<int>()), token);
                 if (result != user.Id) throw new Exception();
                 await _tempLoginUserRep.DeleteAsync(tempUser.Email, token);
                 await _transactions.CommitAsync();
