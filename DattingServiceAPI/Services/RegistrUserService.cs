@@ -55,7 +55,7 @@ namespace ProfilesServiceAPI.Services
             try
             {
                 await _transactions.BeginTransactionAsync();
-                if(await _loginUserRep.CheckAsync(id, token)) throw new Exception();
+                if(!await _loginUserRep.CheckAsync(id, token)) throw new Exception();
                 int result = await _interestsRep.DeleteAsync(id, token);
                 if(result == 0) throw new Exception();
                 result = await _userRep.DeleteAsync(id, token);

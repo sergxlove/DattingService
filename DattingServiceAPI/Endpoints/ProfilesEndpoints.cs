@@ -2,7 +2,6 @@
 using DattingService.Core.Requests;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json.Linq;
 using ProfilesServiceAPI.Abstractions;
 using ProfilesServiceAPI.Requests;
 using System.Security.Claims;
@@ -14,8 +13,7 @@ namespace ProfilesServiceAPI.Endpoints
         public static IEndpointRouteBuilder MapProfilesEndpoints(this IEndpointRouteBuilder app)
         {
             app.MapPost("/api/profiles/photo/upload", async (HttpContext context,
-                [FromServices] IPhotosService photosService,
-                [FromServices] IUsersService usersService,
+                [FromServices] IPhotoMovedService photoMovedService,
                 [FromForm] IFormFile file,
                 CancellationToken token) =>
             {
@@ -29,14 +27,9 @@ namespace ProfilesServiceAPI.Endpoints
                     if (idStr == string.Empty) return Results.BadRequest("error");
                     Guid id = Guid.Parse(idStr!);
                     using Stream stream = file.OpenReadStream();
-                    string photoId = await photosService.UploadFileAsync("photopr", file.FileName,
-                        stream, token);
-                    if (photoId == string.Empty) return Results.InternalServerError();
-                    Users? user = await usersService.GetByIdAsync(id, token);
-                    if (user is null) return Results.NotFound("not found user");
-                    user.AddUrlPhoto(photoId);
-                    int resultUpdate = await usersService.UpdateAsync(user, token);
-                    if (resultUpdate == 0) return Results.InternalServerError();
+                    bool result = await photoMovedService.AddPhotoAsync(stream, id, 
+                        file.FileName, token);
+                    if (!result) return Results.BadRequest("photo no add");
                     return Results.Ok();
                 }
                 catch(Exception ex)
@@ -73,25 +66,22 @@ namespace ProfilesServiceAPI.Endpoints
             });
 
             app.MapPost("/api/profiles/photo/delete", async (HttpContext context,
-                [FromServices] IPhotosService photosService,
-                [FromServices] IUsersService usersService,
+                [FromServices] IPhotoMovedService photoMovedService,
                 CancellationToken token) =>
             {
-                string? idStr = context.User.FindFirst(ClaimTypes.Sid)?.Value;
-                if (idStr == string.Empty) return Results.BadRequest("error");
-                Guid id = Guid.Parse(idStr!);
-                Users? user = await usersService.GetByIdAsync(id, token);
-                if (user is null) return Results.NotFound("user is not found");
-                if(user.PhotoURL is null) return Results.NotFound("this user no image");
-                bool result = await photosService.DeleteAsync("photopr",user.PhotoURL[0].ToString(), token);
-                if (result)
+                try
                 {
-                    user.RemoveUrlPhoto(user.PhotoURL[0].ToString());
-                    await usersService.UpdateAsync(user, token);
+                    string? idStr = context.User.FindFirst(ClaimTypes.Sid)?.Value;
+                    if (idStr == string.Empty) return Results.BadRequest("error");
+                    Guid id = Guid.Parse(idStr!);
+                    bool result = await photoMovedService.DeletePhotoAsync(id, token);
+                    if (!result) Results.BadRequest("photo no delete");
                     return Results.Ok();
                 }
-                return Results.BadRequest("image don't delete");
-
+                catch (Exception ex)
+                {
+                    return Results.BadRequest(ex.Message);
+                }
             }).RequireAuthorization("OnlyForAuthUser");
 
             app.MapPut("/api/profiles/change", async (HttpContext context,

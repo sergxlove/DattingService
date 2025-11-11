@@ -51,6 +51,7 @@ namespace ProfilesServiceAPI
             builder.Services.AddScoped<ITempLoginUsersService, TempLoginUsersService>();
             builder.Services.AddScoped<ITransactionsWork, TransactionsWork>();
             builder.Services.AddScoped<IRegistrUserService, RegistrUserService>();
+            builder.Services.AddScoped<IPhotoMovedService, PhotoMovedService>();
             builder.Services.AddScoped<IConvertService, ConvertService>();
             builder.Services.AddSingleton<IMinioClient>(sp =>
                 new MinioClient()
