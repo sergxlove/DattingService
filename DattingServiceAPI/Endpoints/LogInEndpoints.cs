@@ -114,12 +114,16 @@ namespace ProfilesServiceAPI.Endpoints
                 }
             });
 
-            app.MapDelete("/api/users/delete", (HttpContext context) =>
+            app.MapDelete("/api/users/delete", async (HttpContext context, 
+                [FromServices] IRegistrUserService registrService, 
+                CancellationToken token) =>
             {
                 string? idStr = context.User.FindFirst(ClaimTypes.Sid)?.Value;
                 if (idStr == string.Empty) return Results.BadRequest("error");
                 Guid id = Guid.Parse(idStr!);
-
+                bool result = await registrService.DeleteUserAsync(id, token);
+                if (!result) return Results.BadRequest("no delete");
+                context.Response.Cookies.Delete("jwt");
                 return Results.Ok();
             }).RequireAuthorization("OnlyForAuthUser");
 
