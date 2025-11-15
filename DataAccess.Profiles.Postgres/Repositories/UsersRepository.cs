@@ -1,8 +1,8 @@
 ﻿using DataAccess.Profiles.Postgres;
+using DataAccess.Profiles.Postgres.Abstractions;
 using DataAccess.Profiles.Postgres.Models;
 using DattingService.Core.Models;
 using Microsoft.EntityFrameworkCore;
-using ProfilesServiceAPI.Abstractions;
 
 namespace ProfilesServiceAPI.Repositories
 {
@@ -72,8 +72,8 @@ namespace ProfilesServiceAPI.Repositories
         {
             return await _context.Users
                 .AsNoTracking()
-                .Where (a => a.Id == id)
-                .ExecuteUpdateAsync(a => 
+                .Where(a => a.Id == id)
+                .ExecuteUpdateAsync(a =>
                     a.SetProperty(b => b.IsActive, true), token);
         }
 

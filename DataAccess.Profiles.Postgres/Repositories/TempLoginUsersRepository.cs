@@ -1,8 +1,8 @@
 ﻿using DataAccess.Profiles.Postgres;
+using DataAccess.Profiles.Postgres.Abstractions;
 using DataAccess.Profiles.Postgres.Models;
 using DattingService.Core.Models;
 using Microsoft.EntityFrameworkCore;
-using ProfilesServiceAPI.Abstractions;
 
 namespace ProfilesServiceAPI.Repositories
 {
@@ -41,7 +41,7 @@ namespace ProfilesServiceAPI.Repositories
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.Id == id, token);
             if (result == null) return null;
-            Result<LoginUsers> user = LoginUsers.Create(result.Id, result.Email, 
+            Result<LoginUsers> user = LoginUsers.Create(result.Id, result.Email,
                 result.Password, false);
             if (user.IsSuccess) return user.Value;
             return null;

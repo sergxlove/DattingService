@@ -26,4 +26,8 @@
     <ProjectReference Include="..\DataAccess.Profiles.Postgres\DataAccess.Profiles.Postgres.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Repositories\" />
+  </ItemGroup>
+
 </Project>

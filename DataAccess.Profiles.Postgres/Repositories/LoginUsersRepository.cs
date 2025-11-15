@@ -1,9 +1,9 @@
 ﻿using DataAccess.Profiles.Postgres;
+using DataAccess.Profiles.Postgres.Abstractions;
 using DataAccess.Profiles.Postgres.Models;
 using DattingService.Core.Abstractions;
 using DattingService.Core.Models;
 using Microsoft.EntityFrameworkCore;
-using ProfilesServiceAPI.Abstractions;
 
 namespace ProfilesServiceAPI.Repositories
 {
@@ -84,11 +84,11 @@ namespace ProfilesServiceAPI.Repositories
                 a.SetProperty(a => a.Password, user.Password), token);
         }
 
-        public async Task<string> GetEmailAsync(Guid id,  CancellationToken token)
+        public async Task<string> GetEmailAsync(Guid id, CancellationToken token)
         {
             LoginUsersEntity? result = await _context.LoginUsers
                 .AsNoTracking()
-                .FirstOrDefaultAsync(a => a.Id  == id, token);
+                .FirstOrDefaultAsync(a => a.Id == id, token);
             if (result is null) return string.Empty;
             return result.Email;
         }

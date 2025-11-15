@@ -1,5 +1,5 @@
-﻿using DattingService.Core.Models;
-using Newtonsoft.Json.Linq;
+﻿using DataAccess.Profiles.Postgres.Abstractions;
+using DattingService.Core.Models;
 using ProfilesServiceAPI.Abstractions;
 
 namespace ProfilesServiceAPI.Services
