@@ -1,7 +1,6 @@
 ﻿using DattingService.Core.Models;
-using Newtonsoft.Json.Linq;
 
-namespace ProfilesServiceAPI.Abstractions
+namespace DataAccess.Profiles.Postgres.Abstractions
 {
     public interface IInterestsRepository
     {

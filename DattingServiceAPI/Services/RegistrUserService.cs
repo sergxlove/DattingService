@@ -1,7 +1,6 @@
 ﻿using DataAccess.Profiles.Postgres.Abstractions;
 using DattingService.Core.Models;
 using ProfilesServiceAPI.Abstractions;
-using ProfilesServiceAPI.Requests;
 
 namespace ProfilesServiceAPI.Services
 {

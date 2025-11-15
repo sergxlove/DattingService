@@ -1,9 +1,8 @@
 ﻿using DataAccess.Profiles.Postgres;
+using DataAccess.Profiles.Postgres.Abstractions;
 using DataAccess.Profiles.Postgres.Models;
 using DattingService.Core.Models;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Linq;
-using ProfilesServiceAPI.Abstractions;
 
 namespace ProfilesServiceAPI.Repositories
 {
