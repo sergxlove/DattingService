@@ -4,7 +4,7 @@ using DataAccess.Profiles.Postgres.Models;
 using DattingService.Core.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace ProfilesServiceAPI.Repositories
+namespace DataAccess.Profiles.Postgres.Repositories
 {
     public class UsersRepository : IUsersRepository
     {

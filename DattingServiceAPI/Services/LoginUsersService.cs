@@ -12,7 +12,7 @@ namespace ProfilesServiceAPI.Services
             _repository = repository;
         }
 
-        public async Task<Guid?> VerifyAsync(string email, string password, CancellationToken token)
+        public async Task<Guid> VerifyAsync(string email, string password, CancellationToken token)
         {
             return await _repository.VerifyAsync(email, password, token);
         }

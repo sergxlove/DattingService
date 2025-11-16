@@ -3,6 +3,7 @@ using DataAccess.Photo.S3Minio.Repositories;
 using DataAccess.Profiles.Postgres;
 using DataAccess.Profiles.Postgres.Abstractions;
 using DataAccess.Profiles.Postgres.Infrastructure;
+using DataAccess.Profiles.Postgres.Repositories;
 using DattingService.Core.Abstractions;
 using DattingService.Core.Services;
 using HealthChecks.UI.Client;
@@ -15,7 +16,6 @@ using Microsoft.IdentityModel.Tokens;
 using Minio;
 using ProfilesServiceAPI.Abstractions;
 using ProfilesServiceAPI.Extensions;
-using ProfilesServiceAPI.Repositories;
 using ProfilesServiceAPI.Services;
 using Serilog;
 using System.Security.Claims;
@@ -49,6 +49,8 @@ namespace ProfilesServiceAPI
             builder.Services.AddScoped<IInterestsService, InterestsService>();
             builder.Services.AddScoped<ITempLoginUsersRepository, TempLoginUsersRepository>();
             builder.Services.AddScoped<ITempLoginUsersService, TempLoginUsersService>();
+            builder.Services.AddScoped<ITokensUserRepository, TokensUserRepository>();
+            builder.Services.AddScoped<ITokensUserService, TokensUserService>();
             builder.Services.AddScoped<ITransactionsWork, TransactionsWork>();
             builder.Services.AddScoped<IRegistrUserService, RegistrUserService>();
             builder.Services.AddScoped<IPhotoMovedService, PhotoMovedService>();
@@ -73,11 +75,11 @@ namespace ProfilesServiceAPI
                         .GetSection("JwtSettings");
                     options.TokenValidationParameters = new()
                     {
-                        ValidateIssuer = false,
+                        ValidateIssuer = true,
                         ValidIssuer = jwtSettings["Issuer"],
-                        ValidateAudience = false,
+                        ValidateAudience = true,
                         ValidAudience = jwtSettings["Audience"],
-                        ValidateLifetime = false,
+                        ValidateLifetime = true,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
                             .GetBytes(jwtSettings["SecretKey"]!)),
                         ValidateIssuerSigningKey = true
@@ -86,7 +88,7 @@ namespace ProfilesServiceAPI
                     {
                         OnMessageReceived = context =>
                         {
-                            context.Token = context.Request.Cookies["jwt"];
+                            context.Token = context.Request.Cookies["access_token"];
                             return Task.CompletedTask;
                         }
                     };

@@ -4,6 +4,6 @@ namespace ProfilesServiceAPI.Abstractions
 {
     public interface IJwtProviderService
     {
-        string? GenerateToken(JwtRequest request);
+        string GenerateToken(JwtRequest request);
     }
 }
