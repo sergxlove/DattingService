@@ -8,7 +8,7 @@ namespace ProfilesServiceAPI.Services
 {
     public class JwtProviderService : IJwtProviderService
     {
-        public string? GenerateToken(JwtRequest request)
+        public string GenerateToken(JwtRequest request)
         {
             JwtSecurityToken jwt = new(
                     issuer: request.Issuer,

@@ -14,6 +14,7 @@ namespace DataAccess.Profiles.Postgres
         public DbSet<InterestsEntity> Interests { get; set; }
         public DbSet<SwipesEntity> Swipes { get; set; }
         public DbSet<TempLoginUsersEntity> TempLoginUsers { get; set; }
+        public DbSet<TokensUserEntity> TokensUsers { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -27,6 +28,7 @@ namespace DataAccess.Profiles.Postgres
             modelBuilder.ApplyConfiguration(new InterestsConfigurations());
             modelBuilder.ApplyConfiguration(new SwipesConfigurations());
             modelBuilder.ApplyConfiguration(new TempLoginUsersConfigurations());
+            modelBuilder.ApplyConfiguration(new TokensUserConfigurations());
             base.OnModelCreating(modelBuilder);
         }
     }

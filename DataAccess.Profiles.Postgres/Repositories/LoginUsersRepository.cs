@@ -5,7 +5,7 @@ using DattingService.Core.Abstractions;
 using DattingService.Core.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace ProfilesServiceAPI.Repositories
+namespace DataAccess.Profiles.Postgres.Repositories
 {
     public class LoginUsersRepository : ILoginUsersRepository
     {
@@ -18,14 +18,14 @@ namespace ProfilesServiceAPI.Repositories
             _passwordHasher = passwordHasher;
         }
 
-        public async Task<Guid?> VerifyAsync(string email, string password, CancellationToken token)
+        public async Task<Guid> VerifyAsync(string email, string password, CancellationToken token)
         {
-            if (string.IsNullOrEmpty(email)) return null;
-            if (string.IsNullOrEmpty(password)) return null;
+            if (string.IsNullOrEmpty(email)) return Guid.Empty;
+            if (string.IsNullOrEmpty(password)) return Guid.Empty;
             LoginUsersEntity? result = await _context.LoginUsers.FirstOrDefaultAsync(a => a.Email == email, token);
-            if (result == null) return null;
+            if (result == null) return Guid.Empty;
             if (_passwordHasher.Verify(password, result.Password)) return result.Id;
-            return null;
+            return Guid.Empty;
         }
 
         public async Task<Guid> AddAsync(LoginUsers user, CancellationToken token)

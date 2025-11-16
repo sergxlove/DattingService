@@ -10,20 +10,23 @@ namespace ProfilesServiceAPI.Services
         private readonly IUsersRepository _userRep;
         private readonly ITempLoginUsersRepository _tempLoginUserRep;
         private readonly IInterestsRepository _interestsRep;
+        private readonly ITokensUserRepository _tokensUserRep;
         private readonly ITransactionsWork _transactions;
 
         public RegistrUserService(ILoginUsersRepository loginUserRep, IUsersRepository userRep,
-            ITempLoginUsersRepository tempLoginUserRep, IInterestsRepository interestsRep,
-            ITransactionsWork transactions)
+            ITempLoginUsersRepository tempLoginUserRep, IInterestsRepository interestsRep, 
+            ITokensUserRepository tokensUserRep, ITransactionsWork transactions)
         {
             _loginUserRep = loginUserRep;
             _userRep = userRep;
             _tempLoginUserRep = tempLoginUserRep;
             _interestsRep = interestsRep;
+            _tokensUserRep = tokensUserRep;
             _transactions = transactions;
         }
 
-        public async Task<bool> RegistrationAsync(Users user, CancellationToken token)
+        public async Task<bool> RegistrationAsync(Users user, TokensUser tokenUser, 
+            CancellationToken token)
         {
             try
             {
@@ -39,6 +42,8 @@ namespace ProfilesServiceAPI.Services
                 result = await _interestsRep.AddAsync(new Interests(user.Id, Array.Empty<int>()), token);
                 if (result != user.Id) throw new Exception();
                 await _tempLoginUserRep.DeleteAsync(tempUser.Email, token);
+                result = await _tokensUserRep.AddAsync(tokenUser, token);
+                if (result != tokenUser.Id) throw new Exception();
                 await _transactions.CommitAsync();
                 return true;
             }
@@ -60,6 +65,8 @@ namespace ProfilesServiceAPI.Services
                 result = await _userRep.DeleteAsync(id, token);
                 if (result == 0) throw new Exception();
                 result = await _loginUserRep.DeleteAsync(id, token);
+                if (result == 0) throw new Exception();
+                result = await _tokensUserRep.DeleteAsync(id, token); 
                 if (result == 0) throw new Exception();
                 await _transactions.CommitAsync();
                 return true;
