@@ -65,6 +65,21 @@ namespace DataAccess.Profiles.Postgres.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "tokensUser",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Ended = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Role = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tokensUser", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "users",
                 columns: table => new
                 {
@@ -110,6 +125,9 @@ namespace DataAccess.Profiles.Postgres.Migrations
 
             migrationBuilder.DropTable(
                 name: "tempLoginUsers");
+
+            migrationBuilder.DropTable(
+                name: "tokensUser");
 
             migrationBuilder.DropTable(
                 name: "users");

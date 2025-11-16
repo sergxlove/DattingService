@@ -1,6 +1,5 @@
 ﻿using DattingService.Core.Models;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
 using ProfilesServiceAPI.Abstractions;
 using ProfilesServiceAPI.Requests;
 using System.Security.Claims;
@@ -46,11 +45,11 @@ namespace ProfilesServiceAPI.Endpoints
                     int lifetimeRefresh = Convert.ToInt32(config["JwtSettings:LifetimeRefreshDays"]);
                     string accessToken = jwtGenerate!.GenerateToken(new JwtRequest()
                     {
-                        Audience = config["Jwt:Audience"]!,
-                        Issuer = config["Jwt:Issuer"]!,
+                        Audience = config["JwtSettings:Audiens"]!,
+                        Issuer = config["JwtSettings:Issuer"]!,
                         Claims = accessClaims,
                         Expires = DateTime.UtcNow.AddMinutes(lifetimeAccess),
-                        SecretKey = config["Jwt:Key"]!
+                        SecretKey = config["JwtSettings:SecretKey"]!
                     });
                     Result<TokensUser> tokenUser = TokensUser.Create(Guid.NewGuid(), idUser,
                         DateTime.UtcNow, DateTime.UtcNow + TimeSpan.FromDays(lifetimeRefresh), roleUser);
@@ -100,11 +99,11 @@ namespace ProfilesServiceAPI.Endpoints
                 int lifetimeRefresh = Convert.ToInt32(config["JwtSettings:LifetimeRefreshDays"]);
                 string accessToken = jwtService.GenerateToken(new JwtRequest
                 {
-                    Audience = config["Jwt:Audience"]!,
-                    Issuer = config["Jwt:Issuer"]!,
+                    Audience = config["JwtSettings:Audiens"]!,
+                    Issuer = config["JwtSettings:Issuer"]!,
                     Claims = accessClaims,
                     Expires = DateTime.UtcNow.AddMinutes(lifetimeAccess),
-                    SecretKey = config["Jwt:Key"]!
+                    SecretKey = config["JwtSettings:SecretKey"]!
                 });
                 Result<TokensUser> newTokenUser = TokensUser.Create(Guid.NewGuid(), tokenDb.UserId,
                         DateTime.UtcNow, DateTime.UtcNow + TimeSpan.FromDays(lifetimeRefresh),
@@ -130,9 +129,10 @@ namespace ProfilesServiceAPI.Endpoints
 
             app.MapPost("/api/users/regLoginUser", async (HttpContext context,
                 [FromBody] RegLoginRequest request,
-                [FromServices] IJwtProviderService jwtGenerate,
+                [FromServices] IJwtProviderService jwtService,
                 [FromServices] ITempLoginUsersService tempLoginUsersService,
                 [FromServices] ILoginUsersService loginUserService,
+                IConfiguration config,
                 CancellationToken token) =>
             {
                 try
@@ -150,17 +150,30 @@ namespace ProfilesServiceAPI.Endpoints
                     Result<LoginUsers> user = LoginUsers.Create(request.Username, request.Password);
                     if (!user.IsSuccess) return Results.BadRequest(user.Error);
                     await tempLoginUsersService.AddAsync(user.Value, token);
-                    List<Claim> claims = new()
+                    List<Claim> accessClaims = new()
                     {
-                        new Claim(ClaimTypes.Role, "user"),
+                        new Claim(ClaimTypes.Role, "beginRegUser"),
                         new Claim(ClaimTypes.Sid, user.Value.Id.ToString()!),
                     };
-                    string? jwttoken = jwtGenerate!.GenerateToken(new JwtRequest()
+                    int lifetimeAccess = Convert.ToInt32(config["JwtSettings:LifetimeAccessMinutes"]);
+                    string accessToken = jwtService.GenerateToken(new JwtRequest
                     {
-                        Claims = claims
+                        Audience = config["JwtSettings:Audiens"]!,
+                        Issuer = config["JwtSettings:Issuer"]!,
+                        Claims = accessClaims,
+                        Expires = DateTime.UtcNow.AddMinutes(lifetimeAccess),
+                        SecretKey = config["JwtSettings:SecretKey"]!
                     });
-                    context.Response.Cookies.Append("jwt", jwttoken!);
-                    return Results.Ok(jwttoken!);
+                    CookieOptions cookieOptions = new()
+                    {
+                        HttpOnly = true,
+                        Secure = true,
+                        SameSite = SameSiteMode.Strict,
+                        IsEssential = true
+                    };
+                    cookieOptions.MaxAge = TimeSpan.FromMinutes(lifetimeAccess);
+                    context.Response.Cookies.Append("access_token", accessToken, cookieOptions);
+                    return Results.Ok();
                 }
                 catch
                 {
@@ -178,7 +191,7 @@ namespace ProfilesServiceAPI.Endpoints
                 try
                 {
                     string? idStr = context.User.FindFirst(ClaimTypes.Sid)?.Value;
-                    string? roleUser = context.User.FindFirst(ClaimTypes.Role)?.Value;
+                    string roleUser = "user";
                     if (idStr == string.Empty || roleUser == string.Empty)
                         return Results.BadRequest("error");
                     Guid id = Guid.Parse(idStr!);
@@ -200,11 +213,11 @@ namespace ProfilesServiceAPI.Endpoints
                     };
                     string accessToken = jwtService.GenerateToken(new JwtRequest
                     {
-                        Audience = config["Jwt:Audience"]!,
-                        Issuer = config["Jwt:Issuer"]!,
+                        Audience = config["JwtSettings:Audiens"]!,
+                        Issuer = config["JwtSettings:Issuer"]!,
                         Claims = accessClaims,
                         Expires = DateTime.UtcNow.AddMinutes(lifetimeAccess),
-                        SecretKey = config["Jwt:Key"]!
+                        SecretKey = config["JwtSettings:SecretKey"]!
                     });
                     CookieOptions cookieOptions = new()
                     {
@@ -224,7 +237,7 @@ namespace ProfilesServiceAPI.Endpoints
                 {
                     return Results.BadRequest("error");
                 }
-            });
+            }).RequireAuthorization("OnlyForBeginRegUser");
 
             app.MapDelete("/api/users/delete", async (HttpContext context,
                 [FromServices] IRegistrUserService registrService,
@@ -235,7 +248,8 @@ namespace ProfilesServiceAPI.Endpoints
                 Guid id = Guid.Parse(idStr!);
                 bool result = await registrService.DeleteUserAsync(id, token);
                 if (!result) return Results.BadRequest("no delete");
-                context.Response.Cookies.Delete("jwt");
+                context.Response.Cookies.Delete("access_token");
+                context.Response.Cookies.Delete("refresh_token");
                 return Results.Ok();
             }).RequireAuthorization("OnlyForAuthUser");
 
