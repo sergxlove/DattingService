@@ -104,6 +104,10 @@ namespace ProfilesServiceAPI
                 {
                     policy.RequireClaim(ClaimTypes.Role, "user");
                 });
+                options.AddPolicy("OnlyForBeginRegUser", policy =>
+                {
+                    policy.RequireClaim(ClaimTypes.Role, "beginRegUser");
+                });
             });
 
             builder.Services.AddRateLimiter(options =>

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataAccess.Profiles.Postgres.Migrations
 {
     [DbContext(typeof(ProfilesDbContext))]
-    [Migration("20251109185459_InitialCreate")]
+    [Migration("20251116190142_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -86,6 +86,30 @@ namespace DataAccess.Profiles.Postgres.Migrations
                         .IsUnique();
 
                     b.ToTable("tempLoginUsers", (string)null);
+                });
+
+            modelBuilder.Entity("DataAccess.Profiles.Postgres.Models.TokensUserEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("Ended")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("tokensUser", (string)null);
                 });
 
             modelBuilder.Entity("DataAccess.Profiles.Postgres.Models.UsersEntity", b =>
