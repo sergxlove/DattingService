@@ -1,11 +1,12 @@
 ﻿using DattingService.Core.Models;
 using ProfilesServiceAPI.Abstractions;
+using ProfilesServiceAPI.Abstractions.Handlers;
 using ProfilesServiceAPI.Requests;
 using System.Security.Claims;
 
 namespace ProfilesServiceAPI.Handlers.LoginHandlers
 {
-    public class RegLoginUserHandler
+    public class RegLoginUserHandler : IRegLoginUserHandler
     {
 
         private readonly IJwtProviderService _jwtService;
@@ -22,7 +23,7 @@ namespace ProfilesServiceAPI.Handlers.LoginHandlers
             _config = config;
         }
 
-        public async Task<IResult> HandleAsync(HttpContext context, RegLoginRequest request, 
+        public async Task<IResult> HandleAsync(HttpContext context, RegLoginRequest request,
             CancellationToken token)
         {
             try

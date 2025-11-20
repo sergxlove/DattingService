@@ -1,19 +1,19 @@
 ﻿using DattingService.Core.Models;
-using Microsoft.AspNetCore.Mvc;
 using ProfilesServiceAPI.Abstractions;
+using ProfilesServiceAPI.Abstractions.Handlers;
 using ProfilesServiceAPI.Requests;
 using System.Security.Claims;
 
 namespace ProfilesServiceAPI.Handlers.LoginHandlers
 {
-    public class RegUserHandler
+    public class RegUserHandler : IRegUserHandler
     {
 
         private readonly IRegistrUserService _registrService;
         private readonly IJwtProviderService _jwtService;
         private readonly IConfiguration _config;
 
-        public RegUserHandler(IRegistrUserService registrService, IJwtProviderService jwtService, 
+        public RegUserHandler(IRegistrUserService registrService, IJwtProviderService jwtService,
             IConfiguration config)
         {
             _registrService = registrService;

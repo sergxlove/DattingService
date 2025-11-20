@@ -1,11 +1,12 @@
 ﻿using DattingService.Core.Models;
 using ProfilesServiceAPI.Abstractions;
+using ProfilesServiceAPI.Abstractions.Handlers;
 using ProfilesServiceAPI.Requests;
 using System.Security.Claims;
 
 namespace ProfilesServiceAPI.Handlers.LoginHandlers
 {
-    public class RefreshHandler
+    public class RefreshHandler : IRefreshHandler
     {
 
         private readonly ITokensUserService _tokenService;
