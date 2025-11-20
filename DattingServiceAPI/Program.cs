@@ -15,7 +15,10 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Minio;
 using ProfilesServiceAPI.Abstractions;
+using ProfilesServiceAPI.Abstractions.Handlers;
 using ProfilesServiceAPI.Extensions;
+using ProfilesServiceAPI.Handlers.LoginHandlers;
+using ProfilesServiceAPI.Handlers.ProfilesHandlers;
 using ProfilesServiceAPI.Services;
 using Serilog;
 using System.Security.Claims;
@@ -64,6 +67,20 @@ namespace ProfilesServiceAPI
             builder.Services.AddScoped<IPhotoRepository, PhotoRepository>();
             builder.Services.AddScoped<IPhotosService, PhotosService>();
             builder.Services.AddScoped<IJwtProviderService, JwtProviderService>();
+            builder.Services.AddScoped<IDeleteUserHandler, DeleteUserHandler>();
+            builder.Services.AddScoped<ILoginUserHandler, LoginUserHandler>();
+            builder.Services.AddScoped<ILogoutHandler, LogoutHandler>();
+            builder.Services.AddScoped<IRefreshHandler, RefreshHandler>();
+            builder.Services.AddScoped<IRegLoginUserHandler, RegLoginUserHandler>();
+            builder.Services.AddScoped<IRegUserHandler, RegUserHandler>();
+            builder.Services.AddScoped<IGetProfilesHandler, GetProfilesHandler>();
+            builder.Services.AddScoped<IInterestsUpdateHandler, InterestsUpdateHandler>();
+            builder.Services.AddScoped<IPhotoDeleteHandler, PhotoDeleteHandler>();
+            builder.Services.AddScoped<IPhotoUploadHandler, PhotoUploadHandler>();
+            builder.Services.AddScoped<IProfileChangeHandler,  ProfileChangeHandler>();
+            builder.Services.AddScoped<IProfileInterestHandler, ProfileInterestHandler>();
+            builder.Services.AddScoped<IProfilesPasswordHandler, ProfilesPasswordHandler>();
+            builder.Services.AddScoped<IProfilesPhotoHandler, ProfilesPhotoHandler>();
             builder.WebHost.ConfigureKestrel(options =>
             {
                 options.Limits.MaxRequestBodySize = 10 * 1024 * 1024; 

@@ -1,6 +1,8 @@
-﻿namespace ProfilesServiceAPI.Handlers.LoginHandlers
+﻿using ProfilesServiceAPI.Abstractions.Handlers;
+
+namespace ProfilesServiceAPI.Handlers.LoginHandlers
 {
-    public class LogoutHandler
+    public class LogoutHandler : ILogoutHandler
     {
         public LogoutHandler() { }
 

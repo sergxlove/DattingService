@@ -1,15 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ProfilesServiceAPI.Abstractions;
+﻿using ProfilesServiceAPI.Abstractions;
+using ProfilesServiceAPI.Abstractions.Handlers;
 using System.Security.Claims;
 
 namespace ProfilesServiceAPI.Handlers.LoginHandlers
 {
-    public class DeleteHandler
+    public class DeleteUserHandler : IDeleteUserHandler
     {
 
         private readonly IRegistrUserService _registrService;
 
-        public DeleteHandler(IRegistrUserService registrUserService)
+        public DeleteUserHandler(IRegistrUserService registrUserService)
         {
             _registrService = registrUserService;
         }
