@@ -1,10 +1,8 @@
 ﻿using DattingService.Core.Models;
-using DattingService.Core.Requests;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
-using ProfilesServiceAPI.Abstractions;
+using ProfilesServiceAPI.Abstractions.Handlers;
 using ProfilesServiceAPI.Requests;
-using System.Security.Claims;
 
 namespace ProfilesServiceAPI.Endpoints
 {
@@ -13,29 +11,11 @@ namespace ProfilesServiceAPI.Endpoints
         public static IEndpointRouteBuilder MapProfilesEndpoints(this IEndpointRouteBuilder app)
         {
             app.MapPost("/api/profiles/photo/upload", async (HttpContext context,
-                [FromServices] IPhotoMovedService photoMovedService,
+                [FromServices] IPhotoUploadHandler photoUploadHandler,
                 [FromForm] IFormFile file,
                 CancellationToken token) =>
             {
-                try
-                {
-                    if (file is null || file.Length == 0)
-                        return Results.BadRequest("No file uploaded");
-                    if (file.Length > 10 * 1024 * 1024)
-                        return Results.BadRequest("File too large (max 10MB)");
-                    string? idStr = context.User.FindFirst(ClaimTypes.Sid)?.Value;
-                    if (idStr == string.Empty) return Results.BadRequest("error");
-                    Guid id = Guid.Parse(idStr!);
-                    using Stream stream = file.OpenReadStream();
-                    bool result = await photoMovedService.AddPhotoAsync(stream, id, 
-                        file.FileName, token);
-                    if (!result) return Results.BadRequest("photo no add");
-                    return Results.Ok();
-                }
-                catch(Exception ex)
-                {
-                    return Results.BadRequest(ex);
-                }
+                return await photoUploadHandler.HandleAsync(context, file, token);
             }).DisableAntiforgery()
             .RequireAuthorization("OnlyForAuthUser")
             .WithOpenApi(operation =>
@@ -66,110 +46,41 @@ namespace ProfilesServiceAPI.Endpoints
             });
 
             app.MapPost("/api/profiles/photo/delete", async (HttpContext context,
-                [FromServices] IPhotoMovedService photoMovedService,
+                [FromServices] IPhotoDeleteHandler photoDeleteHandler,
                 CancellationToken token) =>
             {
-                try
-                {
-                    string? idStr = context.User.FindFirst(ClaimTypes.Sid)?.Value;
-                    if (idStr == string.Empty) return Results.BadRequest("error");
-                    Guid id = Guid.Parse(idStr!);
-                    bool result = await photoMovedService.DeletePhotoAsync(id, token);
-                    if (!result) Results.BadRequest("photo no delete");
-                    return Results.Ok();
-                }
-                catch (Exception ex)
-                {
-                    return Results.BadRequest(ex.Message);
-                }
+                return await photoDeleteHandler.HandleAsync(context, token);
             }).RequireAuthorization("OnlyForAuthUser");
 
             app.MapPut("/api/profiles/change", async (HttpContext context,
-                [FromServices] IUsersService usersService,
+                [FromServices] IProfileChangeHandler profilesChangeHandler,
                 [FromBody] RegistrRequest request,
                 CancellationToken token) =>
             {
-                if (request is null) return Results.BadRequest();
-                string? idStr = context.User.FindFirst(ClaimTypes.Sid)?.Value;
-                if (idStr == string.Empty) return Results.BadRequest("error");
-                Guid id = Guid.Parse(idStr!);
-                Users? user = await usersService.GetByIdAsync(id, token);
-                if(user is null) return Results.NotFound("user is not found");
-                UsersRequest usersRequest = new()
-                {
-                    Id = user.Id,
-                    PhotoURL = user.PhotoURL,
-                    IsActive = user.IsActive,
-                    IsVerify = user.IsVerify,
-                };
-                if(request.Name == string.Empty) usersRequest.Name = user.Name;
-                else usersRequest.Name = request.Name;
-                if(request.Age == 0) usersRequest.Age = user.Age;
-                else usersRequest.Age = request.Age;
-                if(request.Target == string.Empty) usersRequest.Target = user.Target;
-                else usersRequest.Target = request.Target;
-                if(request.City == string.Empty) usersRequest.City = user.City;
-                else usersRequest.City = request.City;
-                if(request.Description == string.Empty) usersRequest.Description = user.Description;
-                else usersRequest.Description = request.Description;
-
-                Result<Users> newUser = Users.Create(usersRequest);
-                if(newUser.IsSuccess)
-                {
-                    await usersService.UpdateAsync(newUser.Value, token);
-                    return Results.Ok();
-                }
-                else
-                {
-                    return Results.BadRequest(newUser.Error);
-                }
-
+                return await profilesChangeHandler.HandleAsync(context, request, token);
             }).RequireAuthorization("OnlyForAuthUser");
 
             app.MapPut("/api/profiles/password", async (HttpContext context,
-                [FromServices] ILoginUsersService loginService,
+                [FromServices] IProfilesPasswordHandler profilesPasswordHandler,
                 [FromBody] string newPassword,
                 CancellationToken token) =>
             {
-                try
-                {
-                    string? idStr = context.User.FindFirst(ClaimTypes.Sid)?.Value;
-                    if (idStr == string.Empty) return Results.BadRequest("error");
-                    Guid id = Guid.Parse(idStr!);
-                    string email = await loginService.GetEmailAsync(id, token);
-                    Result<LoginUsers> userLogin = LoginUsers.Create(id, email, newPassword);
-                    if (!userLogin.IsSuccess) return Results.BadRequest(userLogin.Error);
-                    await loginService.UpdatePasswordAsync(userLogin.Value, token);
-                    return Results.Ok();
-                }
-                catch
-                {
-                    return Results.BadRequest("error");
-                }
+                return await profilesPasswordHandler.Handle(context, newPassword, token);
             }).RequireAuthorization("OnlyForAuthUser");
 
             app.MapPut("/api/profiles/interests/update", async (HttpContext context,
                 [FromBody] InterestsRequest request,
-                [FromServices] IUsersService usersService,
-                [FromServices] IInterestsService interestService,
+                [FromServices] IInterestsUpdateHandler interestsUpdateHandler,
                 CancellationToken token) =>
             {
-                string? idStr = context.User.FindFirst(ClaimTypes.Sid)?.Value;
-                if (idStr == string.Empty) return Results.BadRequest("error");
-                Guid id = Guid.Parse(idStr!);
-                bool result = await interestService.CheckAsync(id, token);
-                if (!result) return Results.NotFound("user not found");
-                Interests interests = new(id, request.InterestsUser.ToArray());
-                await interestService.UpdateAsync(interests, token);
-                return Results.Ok();
+                return await interestsUpdateHandler.HandleAsync(context, request, token);
             }).RequireAuthorization("OnlyForAuthUser");
 
             app.MapGet("/api/profiles/interests/{id}", async (Guid id, HttpContext context,
-                [FromServices] IInterestsService interestService,
+                [FromServices] IProfileInterestHandler profileInterestHandler,
                 CancellationToken token) =>
             {
-                int[] result = await interestService.GetAsync(id, token);
-                return Results.Ok(result);
+                return await profileInterestHandler.HandleAsync(context, id, token);
             }).RequireAuthorization("OnlyForAuthUser");
 
             app.MapGet("/api/profiles/interests/all", () =>
@@ -178,29 +89,18 @@ namespace ProfilesServiceAPI.Endpoints
             }).RequireAuthorization("OnlyForAuthUser");
 
             app.MapGet("/api/profiles/{id}", async (Guid id, HttpContext context, 
-                [FromServices] IUsersService userService,
+                [FromServices] IGetProfilesHandler getProfilesHandler,
                 CancellationToken token) =>
             {
-                try
-                {
-                    Users? result = await userService.GetByIdAsync(id, token);
-                    if(result is null) return Results.BadRequest("error");
-                    return Results.Ok(result);
-                }
-                catch
-                {
-                    return Results.BadRequest("error");
-                }
+                return await getProfilesHandler.HandleAsync(context, id, token);
             }).RequireAuthorization("OnlyForAuthUser");
 
             app.MapGet("/api/profiles/photo/{photoName}", async (string photoName,
                 HttpContext context,
-                [FromServices] IPhotosService photosService,
+                [FromServices] IProfilesPhotoHandler profilesHandler,
                 CancellationToken token) =>
             {
-                Stream? stream = await photosService.DownloadFromNameAsync(photoName, "photopr", token);
-                if (stream is null) return Results.BadRequest();
-                return Results.Stream(stream);
+                return await profilesHandler.HandleAsync(context, photoName, token);
             }).RequireAuthorization("OnlyForAuthUser");
 
             return app;
